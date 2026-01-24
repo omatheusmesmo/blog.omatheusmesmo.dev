@@ -7,7 +7,7 @@ layout: "about"
 
 Hello! Welcome to my blog.
 
-This space is dedicated to sharing knowledge and experiences in the vast universe of software development, with a special focus on Java and quality practices such as testing. My goal is to create a repository of insights and discussions that can help other developers in their journeys, from fundamental concepts to the latest trends.
+This space is dedicated to sharing knowledge and experiences in the vast universe of software development, with a special focus on Java, its ecosystem, Angular, and Cloud. My goal is to create a repository of insights and discussions that can help other developers in their journeys, from fundamental concepts to the latest trends.
 
 I am Matheus Oliveira, a software developer passionate about technology and building robust and scalable solutions. With experience in system architecture and agile methodologies, I believe that shared knowledge is a powerful tool for collective growth.
 

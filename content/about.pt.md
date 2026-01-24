@@ -8,7 +8,7 @@ slug: "about"
 
 Olá! Seja bem-vindo(a) ao meu blog.
 
-Este espaço é dedicado a compartilhar conhecimentos e experiências no vasto universo do desenvolvimento de software, com um foco especial em Java e práticas de qualidade como testes. Meu objetivo é criar um repositório de insights e discussões que possam auxiliar outros desenvolvedores em suas jornadas, desde conceitos fundamentais até as tendências mais recentes.
+Este espaço é dedicado a compartilhar conhecimentos e experiências no vasto universo do desenvolvimento de software, com um foco especial em Java, seu ecossistema, Angular e Cloud. Meu objetivo é criar um repositório de insights e discussões que possam auxiliar outros desenvolvedores em suas jornadas, desde conceitos fundamentais até as tendências mais recentes.
 
 Sou Matheus Oliveira, um desenvolvedor de software apaixonado por tecnologia e por construir soluções robustas e escaláveis. Com experiência em arquitetura de sistemas e metodologias ágeis, acredito que o conhecimento compartilhado é uma ferramenta poderosa para o crescimento coletivo.
 

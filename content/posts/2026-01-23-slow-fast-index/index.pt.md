@@ -6,6 +6,7 @@ tags: ["Algoritmos", "Java", "Performance", "Dicas"]
 author: "Matheus Oliveira"
 slug: "slow-fast-index"
 summary: "Aprenda como reduzir a complexidade de algoritmos de O(n²) para O(n) usando a técnica de dois ponteiros."
+description: "Aprenda como reduzir a complexidade de algoritmos de O(n²) para O(n) usando a técnica de dois ponteiros."
 cover:
   image: "two-pointers.svg"
   alt: "Diagrama da técnica de dois ponteiros"

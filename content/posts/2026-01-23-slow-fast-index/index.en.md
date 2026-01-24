@@ -6,6 +6,7 @@ tags: ["Algorithms", "Java", "Performance", "Tips"]
 author: "Matheus Oliveira"
 slug: "slow-fast-index"
 summary: "Learn how to reduce algorithm complexity from O(n²) to O(n) using the two-pointer technique."
+description: "Learn how to reduce algorithm complexity from O(n²) to O(n) using the two-pointer technique."
 cover:
   image: "two-pointers.svg"
   alt: "Two Pointers Technique Diagram"

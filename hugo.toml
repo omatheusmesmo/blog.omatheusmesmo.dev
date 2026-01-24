@@ -21,6 +21,9 @@ defaultContentLanguage = 'pt'
   
   [params.assets]
     favicon = "/images/duke.svg"
+    favicon16x16 = "/images/duke.svg"
+    favicon32x32 = "/images/duke.svg"
+    apple_touch_icon = "/images/duke.svg"
 
   # Share buttons config
   ShareButtons = ["whatsapp", "linkedin", "twitter", "telegram", "facebook", "reddit"]

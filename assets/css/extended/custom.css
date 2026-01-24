@@ -10,13 +10,6 @@
     object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer se necessário */
 }
 
-/* Custom header styling to subtly distinguish it from the body */
-header .nav {
-    border-bottom: 1px solid var(--border); /* Subtle bottom border using theme's border color */
-    padding-top: 10px; /* Maintain good padding */
-    padding-bottom: 10px; /* Maintain good padding */
-    background-color: var(--entry); /* Use entry background for subtle distinction */
-}
 
 /* Custom Color Palette Overrides */
 :root { /* Light Theme */

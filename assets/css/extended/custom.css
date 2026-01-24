@@ -18,11 +18,34 @@ header .nav {
     background-color: var(--entry); /* Use entry background for subtle distinction */
 }
 
-/* Typography adjustments */
-body {
-    font-family: 'Inter', sans-serif;
+/* Custom Color Palette Overrides */
+:root { /* Light Theme */
+    --theme: #f8f8f8; /* Slightly off-white background */
+    --entry: #ffffff; /* Pure white for content cards/entries */
+    --primary: #333333; /* Dark gray for main text */
+    --secondary: #5a5a5a; /* Medium gray for secondary text */
+    --tertiary: #b0b0b0; /* Light gray for subtle elements */
+    --border: #e0e0e0; /* Softer border color */
+    --code-bg: #f5f5f5; /* Light code block background */
+    --code-block-bg: #3c3c3c; /* Dark code block background for better contrast */
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
+:root[data-theme="dark"] { /* Dark Theme */
+    --theme: #202020; /* Darker background */
+    --entry: #2c2c2c; /* Slightly lighter dark for content cards */
+    --primary: #e0e0e0; /* Light gray for main text */
+    --secondary: #aaaaaa; /* Lighter medium gray for secondary text */
+    --tertiary: #505050; /* Darker light gray */
+    --border: #383838; /* Darker border color */
+    --code-bg: #303030; /* Dark code background */
+    --code-block-bg: #282828; /* Even darker code block for contrast */
+}
+
+/* Unbox first entry on homepage */
+.first-entry {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: var(--gap); /* Restore some spacing */
 }

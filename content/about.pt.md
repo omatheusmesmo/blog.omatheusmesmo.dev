@@ -16,6 +16,6 @@ Espero que encontre conteúdo útil e inspirador por aqui!
 
 ## Conecte-se Comigo
 
-*   📧 **Email:** [matheus.6148@gmail.com](mailto:matheus.6148@gmail.com)
+*   📧 **Email:** [hi@omatheusmesmo.dev](mailto:hi@omatheusmesmo.dev)
 *   🔗 **GitHub:** [omatheusmesmo](https://github.com/omatheusmesmo)
 *   👔 **LinkedIn:** [omatheusmesmo](https://www.linkedin.com/in/omatheusmesmo/)

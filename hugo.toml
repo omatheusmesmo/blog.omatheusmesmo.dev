@@ -14,6 +14,11 @@ defaultContentLanguage = 'pt'
   displayFullLangName = true
   images = ["/images/duke.svg"] # Added default social share image
   
+  # Disqus comments
+  [params.comments]
+    enabled = true
+    disqusShortname = "YOUR_DISQUS_SHORTNAME"
+  
   [params.assets]
     favicon = "/images/duke.svg"
 

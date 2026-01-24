@@ -1,3 +1,4 @@
+baseURL = 'https://blog.omatheusmesmo.dev/'
 title = 'Matheus Oliveira'
 theme = 'PaperMod'
 defaultContentLanguage = 'pt'

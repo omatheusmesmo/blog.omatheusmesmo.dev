@@ -6,6 +6,7 @@ tags: ["Java", "Testing", "JUnit", "Mockito"]
 author: "Matheus Oliveira"
 slug: "testes-unitarios-java"
 summary: "Um guia completo para iniciantes sobre testes unitários em Java, cobrindo conceitos, melhores práticas e exemplos com JUnit 5 e Mockito."
+description: "Um guia completo para iniciantes sobre testes unitários em Java, cobrindo conceitos, melhores práticas e exemplos com JUnit 5 e Mockito."
 cover:
   image: "unit-tests.png"
   alt: "Testing errors"

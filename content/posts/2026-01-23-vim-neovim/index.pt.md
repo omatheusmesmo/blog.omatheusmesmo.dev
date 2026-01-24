@@ -6,6 +6,7 @@ tags: ["Vim", "Neovim", "Produtividade", "Ferramentas", "Lua"]
 author: "Matheus Oliveira"
 slug: "vim-neovim"
 summary: "Descubra como dominar o Vim/Neovim pode transformar sua produtividade e mudar a forma como você escreve código, indo muito além de um simples editor de texto."
+description: "Descubra como dominar o Vim/Neovim pode transformar sua produtividade e mudar a forma como você escreve código, indo muito além de um simples editor de texto."
 cover:
   image: "vim-neovim-cover.png"
   alt: "Ilustração do editor Neovim com código Lua"

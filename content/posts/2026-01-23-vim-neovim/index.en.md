@@ -6,6 +6,7 @@ tags: ["Vim", "Neovim", "Productivity", "Tools", "Lua"]
 author: "Matheus Oliveira"
 slug: "vim-neovim"
 summary: "Discover how mastering Vim/Neovim can transform your productivity and change the way you write code, going far beyond just a simple text editor."
+description: "Discover how mastering Vim/Neovim can transform your productivity and change the way you write code, going far beyond just a simple text editor."
 cover:
   image: "vim-neovim-cover.png"
   alt: "Illustration of Neovim editor with Lua code"

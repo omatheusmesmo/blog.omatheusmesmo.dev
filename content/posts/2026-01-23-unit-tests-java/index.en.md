@@ -6,6 +6,7 @@ tags: ["Java", "Testing", "JUnit", "Mockito"]
 author: "Matheus Oliveira"
 slug: "unit-tests-java"
 summary: "A complete beginner's guide to unit testing in Java, covering concepts, best practices, and examples with JUnit 5 and Mockito."
+description: "A complete beginner's guide to unit testing in Java, covering concepts, best practices, and examples with JUnit 5 and Mockito."
 cover:
   image: "unit-tests.png"
   alt: "Testing errors"

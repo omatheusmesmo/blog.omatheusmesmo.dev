@@ -1,0 +1,68 @@
+baseURL = 'https://omatheusmesmo.dev/'
+title = 'Matheus Oliveira'
+theme = 'PaperMod'
+defaultContentLanguage = 'pt'
+
+[params]
+  env = "production"
+  title = "Matheus Oliveira"
+  description = "Example blog with PaperMod"
+  author = "Me"
+  defaultTheme = "auto" # Allows automatic dark mode based on system preference
+  ShowShareButtons = true
+  ShowReadingTime = true
+  displayFullWidth = false
+  displayFullLangName = true
+  
+  [params.assets]
+    favicon = "/images/duke.svg"
+
+  # Share buttons config
+  ShareButtons = ["whatsapp", "linkedin", "twitter", "telegram", "facebook", "reddit"]
+
+[languages]
+  [languages.pt]
+    languageName = "🇧🇷 Português"
+    weight = 1
+    title = "Matheus Oliveira"
+    [languages.pt.params]
+      description = "Um blog minimalista e moderno."
+    [languages.pt.menu]
+      [[languages.pt.menu.main]]
+        identifier = "about"
+        name = "Sobre"
+        url = "/about/"
+        weight = 5
+      [[languages.pt.menu.main]]
+        identifier = "posts"
+        name = "Posts"
+        url = "/posts/"
+        weight = 10
+      [[languages.pt.menu.main]]
+        identifier = "tags"
+        name = "Tags"
+        url = "/tags/"
+        weight = 20
+      
+  [languages.en]
+    languageName = "🇺🇸 English"
+    weight = 2
+    title = "Matheus Oliveira"
+    [languages.en.params]
+      description = "A minimalist and modern blog."
+    [languages.en.menu]
+      [[languages.en.menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "/about/"
+        weight = 5
+      [[languages.en.menu.main]]
+        identifier = "posts"
+        name = "Posts"
+        url = "/posts/"
+        weight = 10
+      [[languages.en.menu.main]]
+        identifier = "tags"
+        name = "Tags"
+        url = "/tags/"
+        weight = 20

@@ -1,4 +1,3 @@
-baseURL = 'https://omatheusmesmo.dev/'
 title = 'Matheus Oliveira'
 theme = 'PaperMod'
 defaultContentLanguage = 'pt'
@@ -6,13 +5,14 @@ defaultContentLanguage = 'pt'
 [params]
   env = "production"
   title = "Matheus Oliveira"
-  description = "Example blog with PaperMod"
+  description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
   author = "Me"
   defaultTheme = "auto" # Allows automatic dark mode based on system preference
   ShowShareButtons = true
   ShowReadingTime = true
   displayFullWidth = false
   displayFullLangName = true
+  images = ["/images/duke.svg"] # Added default social share image
   
   [params.assets]
     favicon = "/images/duke.svg"
@@ -22,11 +22,11 @@ defaultContentLanguage = 'pt'
 
 [languages]
   [languages.pt]
-    languageName = "🇧🇷 Português"
+    languageName = "🇧🇷 Portugês"
     weight = 1
     title = "Matheus Oliveira"
     [languages.pt.params]
-      description = "Um blog minimalista e moderno."
+      description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
     [languages.pt.menu]
       [[languages.pt.menu.main]]
         identifier = "about"
@@ -49,7 +49,7 @@ defaultContentLanguage = 'pt'
     weight = 2
     title = "Matheus Oliveira"
     [languages.en.params]
-      description = "A minimalist and modern blog."
+      description = "A blog dedicated to sharing knowledge and experiences in software development, focusing on Java, its ecosystem, Angular, and Cloud."
     [languages.en.menu]
       [[languages.en.menu.main]]
         identifier = "about"

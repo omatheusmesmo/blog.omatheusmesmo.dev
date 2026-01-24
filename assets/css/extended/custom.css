@@ -9,3 +9,11 @@
     display: block;
     object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer se necessário */
 }
+
+/* Custom header styling to distinguish it from the body */
+.nav {
+    border-bottom: 1px solid var(--border-color); /* Add a subtle bottom border */
+    padding-top: 10px; /* Add some top padding */
+    padding-bottom: 10px; /* Add some bottom padding */
+    background-color: var(--theme); /* Use the theme's background color, or a slightly different one */
+}

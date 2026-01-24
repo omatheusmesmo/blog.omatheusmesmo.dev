@@ -1,0 +1,4 @@
+{{- $styles := resources.Get "css/extended/custom.css" -}}
+{{- if $styles -}}
+<link crossorigin="anonymous" href="{{ $styles.Permalink }}" rel="preload stylesheet" as="style">
+{{- end -}}

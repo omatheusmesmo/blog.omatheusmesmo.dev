@@ -18,3 +18,4 @@ Espero que encontre conteúdo útil e inspirador por aqui!
 
 *   📧 **Email:** [matheus.6148@gmail.com](mailto:matheus.6148@gmail.com)
 *   🔗 **GitHub:** [omatheusmesmo](https://github.com/omatheusmesmo)
+*   👔 **LinkedIn:** [omatheusmesmo](https://www.linkedin.com/in/omatheusmesmo/)

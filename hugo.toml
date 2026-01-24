@@ -1,4 +1,6 @@
 baseURL = 'https://blog.omatheusmesmo.dev/'
+canonifyURLs = false
+relativeURLs = true
 title = 'Matheus Oliveira'
 theme = 'PaperMod'
 defaultContentLanguage = 'pt'

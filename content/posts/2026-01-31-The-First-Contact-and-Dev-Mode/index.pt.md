@@ -4,7 +4,7 @@ date: 2026-01-31T10:00:00-03:00
 draft: false
 tags: ["Java", "Quarkus", "Spring", "Dev Productivity", "Hot Reload", "Quarkus for Spring Developers"]
 author: "Matheus Oliveira"
-slug: "first-contact-and-the-development-mode"
+slug: "primeiro-contato-e-o-modo-de-desenvolvimento-do-quarkus"
 summary: "O primeiro contato prático: criando sua primeira API e descobrindo por que o Dev Mode do Quarkus muda as regras do jogo para quem vem do Spring."
 description: "Aprenda a criar um projeto Quarkus, entenda a estrutura das extensões e experimente o Hot Reload em tempo real, eliminando o tempo de espera por reinicialização."
 cover:

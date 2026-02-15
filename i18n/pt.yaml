@@ -1,0 +1,6 @@
+- id: categories
+  translation: "Categorias"
+- id: tags
+  translation: "Tags"
+- id: read_more
+  translation: "Leia mais"

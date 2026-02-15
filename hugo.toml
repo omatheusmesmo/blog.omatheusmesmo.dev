@@ -5,34 +5,44 @@ title = 'Matheus Oliveira'
 theme = 'PaperMod'
 defaultContentLanguage = 'pt'
 
+# Asset Optimization
+[minify]
+  disableXML = false
+  minifyOutput = true
+
 [params]
+  disqusShortname = 'blog-omatheusmesmo-dev'
   env = "production"
   title = "Matheus Oliveira"
   description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
   author = "Me"
-  defaultTheme = "auto" # Allows automatic dark mode based on system preference
+  defaultTheme = "auto"
   ShowShareButtons = true
   ShowReadingTime = true
   displayFullWidth = false
   displayFullLangName = true
-  images = ["/images/duke.svg"] # Added default social share image
+  images = ["/images/duke.svg"]
   
-  # Disqus comments
-  [params.comments]
-    enabled = true
-    disqusShortname = "YOUR_DISQUS_SHORTNAME"
-  
+  # Asset fingerprinting
   [params.assets]
+    disableFingerprinting = false
     favicon = "/images/duke.svg"
     favicon16x16 = "/images/duke.svg"
     favicon32x32 = "/images/duke.svg"
     apple_touch_icon = "/images/duke.svg"
 
-  # Share buttons config
-  ShareButtons = ["whatsapp", "linkedin", "twitter", "telegram", "facebook", "reddit"]
+  # Home Info Mode
+  [params.homeInfoParams]
+    Title = "Bem-vindo ao meu blog! 👋"
+    Content = "Oi, eu sou o Matheus Oliveira. Sou desenvolvedor focado em Java, Quarkus e Cloud. Aqui compartilho guias técnicos e experiências do meu dia a dia."
+
+  # Disqus comments
+  [params.comments]
+    enabled = true
 
 [languages]
   [languages.pt]
+    languageCode = "pt-br"
     languageName = "🇧🇷 Portugês"
     weight = 1
     title = "Matheus Oliveira"
@@ -56,6 +66,7 @@ defaultContentLanguage = 'pt'
         weight = 20
       
   [languages.en]
+    languageCode = "en-us"
     languageName = "🇺🇸 English"
     weight = 2
     title = "Matheus Oliveira"
@@ -77,3 +88,6 @@ defaultContentLanguage = 'pt'
         name = "Tags"
         url = "/tags/"
         weight = 20
+
+[permalinks]
+  posts = "/:year/:month/:title/"

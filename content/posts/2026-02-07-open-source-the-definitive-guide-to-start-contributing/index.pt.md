@@ -1,12 +1,12 @@
 ---
-title: "Open Source: O Guia Definitivo para Começar a Contribuir"
+title: "Como Contribuir para Projetos Open Source: O Guia Definitivo"
 date: 2026-02-07T10:25:00-03:00
 draft: false
 tags: ["Open Source", "Carreira", "GitHub", "Java", "JakartaEE", "Quarkus", "Spring"]
 author: "Matheus Oliveira"
 slug: "guia-definitivo-contribuir-open-source"
 summary: "O mundo digital é movido por Open Source. Descubra como colocar a mão na massa e começar a contribuir para os projetos que movem o planeta."
-description: "Um guia prático sobre como iniciar no mundo Open Source: da abertura de issues e testes ao impacto real na sua carreira e autoridade técnica."
+description: "Quer começar no Open Source? Aprenda como encontrar projetos, abrir sua primeira issue e contribuir com código ou documentação no GitHub."
 cover:
   image: "open-source-start.png"
   alt: "Iniciando no mundo Open Source"

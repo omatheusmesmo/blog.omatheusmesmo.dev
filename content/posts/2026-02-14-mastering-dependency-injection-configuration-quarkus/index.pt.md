@@ -1,5 +1,5 @@
 ---
-title: "Injecao de Dependencia no Quarkus: O Guia Definitivo para Desenvolvedores Spring"
+title: "Injeção de Dependencia no Quarkus: O Guia Definitivo para Desenvolvedores Spring"
 date: 2026-02-14T10:00:00-03:00
 draft: false
 tags: ["Quarkus", "Spring", "Java", "CDI", "MicroProfile", "Dependency Injection", "Configuração", "Quarkus for Spring Developers"]

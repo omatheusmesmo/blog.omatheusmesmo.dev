@@ -1,12 +1,12 @@
 ---
-title: "A Renascença do Java - Do J2EE ao Cloud Native"
+title: "A Evolução do Java: Do J2EE ao Cloud Native com Quarkus"
 date: 2026-01-24T16:00:00-03:00
 draft: false
 tags: ["Java", "Spring", "Quarkus", "JavaEE", "Cloud", "Quarkus for Spring Developers"]
 author: "Matheus Oliveira"
 slug: "renascenca-do-java-do-j2ee-ao-cloud-native"
 summary: "Conheça a evolução do Java: do peso dos servidores J2EE à eficiência subatômica do Quarkus no mundo Cloud Native."
-description: "Uma jornada histórica e técnica sobre como o Java se reinventou para dominar a nuvem, passando por Spring Boot, containers e a revolução do Quarkus."
+description: "Entenda a história do Java e como ele se reinventou para a nuvem. Descubra por que o Quarkus é a solução para performance e baixo consumo de memória."
 cover:
   image: "j2ee-to-cloud-native.png"
   alt: "Evolução do Java para Cloud Native"

@@ -1,12 +1,12 @@
 ---
-title: "The Java Renaissance - From J2EE to Cloud Native"
+title: "The Java Renaissance: From J2EE to Cloud Native with Quarkus"
 date: 2026-01-24T16:00:00-03:00
 draft: false
 tags: ["Java", "Spring", "Quarkus", "JavaEE", "Cloud", "Quarkus for Spring Developers"]
 author: "Matheus Oliveira"
 slug: "the-java-renaissance-from-j2ee-to-cloud-native"
 summary: "Explore the evolution of Java: from the heavyweight J2EE servers to Quarkus's subatomic efficiency in a Cloud Native world."
-description: "A historical and technical journey of how Java reinvented itself to dominate the cloud, covering Spring Boot, containers, and the Quarkus revolution."
+description: "Discover the history of Java and its evolution into the cloud era. Learn why Quarkus is the go-to solution for high performance and low memory footprint."
 cover:
   image: "j2ee-to-cloud-native.png"
   alt: "Java Evolution to Cloud Native"

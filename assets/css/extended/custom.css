@@ -1,5 +1,13 @@
 /* Custom CSS to override PaperMod defaults */
 
+/* Responsive images within article content */
+article img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* To remove extra space below images */
+    margin: 0 auto; /* To center images if they are smaller than max-width */
+}
+
 /* Restrict the size of the cover image in posts */
 .entry-cover img {
     max-width: 100%;

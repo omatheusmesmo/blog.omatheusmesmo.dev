@@ -2,8 +2,6 @@
 {{- if $img -}}
   {{- $webp := $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
   <img src="{{ $webp.RelPermalink }}" 
-       width="{{ $img.Width }}" 
-       height="{{ $img.Height }}" 
        alt="{{ .Text }}" 
        loading="lazy" 
        decoding="async">

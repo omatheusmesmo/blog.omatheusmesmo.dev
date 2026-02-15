@@ -1,12 +1,12 @@
 ---
-title: "Mastering Dependency Injection and Configuration in Quarkus"
+title: "Quarkus Dependency Injection: The Ultimate Guide for Spring Developers"
 date: 2026-02-14T10:00:00-03:00
 draft: false
 tags: ["Quarkus", "Spring", "Java", "CDI", "MicroProfile", "Dependency Injection", "Configuration", "Quarkus for Spring Developers"]
 author: "Matheus Oliveira"
 slug: "mastering-dependency-injection-configuration-quarkus"
 summary: "Understand how Quarkus reinvented Dependency Injection with ArC: zero runtime reflection, instant startup, and flexible configuration."
-description: "A technical guide for Spring developers migrating to Quarkus. Learn about @ApplicationScoped, ArC vs. Spring DI, MicroProfile Config, and environment profile management."
+description: "Learn how Quarkus reinvented Dependency Injection with ArC. A migration guide for Spring Boot developers covering scopes, @Inject, and config profiles."
 cover:
   image: "quarkus-di-config.png"
   alt: "Duke mascot in Cuphead style carrying a giant Quarkus injection needle"

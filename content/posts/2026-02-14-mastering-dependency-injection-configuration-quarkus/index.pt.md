@@ -1,12 +1,12 @@
 ---
-title: "Dominando Injeção de Dependência e Configuração no Quarkus"
+title: "Injeção de Dependência no Quarkus: Guia Completo para Desenvolvedores Spring"
 date: 2026-02-14T10:00:00-03:00
 draft: false
 tags: ["Quarkus", "Spring", "Java", "CDI", "MicroProfile", "Dependency Injection", "Configuração", "Quarkus for Spring Developers"]
 author: "Matheus Oliveira"
 slug: "dominando-injecao-dependencia-configuracao-quarkus"
 summary: "Entenda como o Quarkus reinventou a Injeção de Dependência com ArC: zero reflexão em runtime, inicialização imediata e configuração flexível."
-description: "Um guia técnico para desenvolvedores Spring migrando para Quarkus. Aprenda sobre @ApplicationScoped, ArC vs Spring DI, MicroProfile Config e como gerenciar perfis de desenvolvimento e produção."
+description: "Aprenda como o Quarkus reinventou a Injeção de Dependência com ArC. Um guia de migração para quem vem do Spring Boot: escopos, @Inject e configurações."
 cover:
   image: "quarkus-di-config.png"
   alt: "Mascote Duke no estilo Cuphead carregando uma seringa gigante do Quarkus"

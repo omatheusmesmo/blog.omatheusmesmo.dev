@@ -1,4 +1,30 @@
-{{- $styles := resources.Get "css/extended/custom.css" -}}
+{{- $styles := resources.Get "css/extended/custom.css" | resources.Minify | resources.Fingerprint -}}
 {{- if $styles -}}
-<link crossorigin="anonymous" href="{{ $styles.Permalink }}" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="{{ $styles.Permalink }}" integrity="{{ $styles.Data.Integrity }}" rel="preload stylesheet" as="style">
 {{- end -}}
+
+{{- /* SEO and Social Media Extras */ -}}
+{{- if .IsHome -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ site.Title }}",
+  "url": "{{ site.BaseURL }}",
+  "description": "{{ site.Params.description }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{{- end -}}
+
+<meta name="apple-mobile-web-app-title" content="{{ site.Title }}">
+<meta name="application-name" content="{{ site.Title }}">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="theme-color" content="#2e2e33">
+
+{{- /* Security Headers (Hints for the browser) */ -}}
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">

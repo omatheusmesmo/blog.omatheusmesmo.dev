@@ -3,42 +3,59 @@
 /* Restrict the size of the cover image in posts */
 .entry-cover img {
     max-width: 100%;
-    max-height: 400px; /* Ajuste este valor conforme necessário */
+    max-height: 400px;
     width: auto;
     margin: 0 auto;
     display: block;
-    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer se necessário */
+    object-fit: cover;
 }
-
 
 /* Custom Color Palette Overrides */
-:root { /* Light Theme */
-    --theme: #f8f8f8; /* Slightly off-white background */
-    --entry: #ffffff; /* Pure white for content cards/entries */
-    --primary: #333333; /* Dark gray for main text */
-    --secondary: #5a5a5a; /* Medium gray for secondary text */
-    --tertiary: #b0b0b0; /* Light gray for subtle elements */
-    --border: #e0e0e0; /* Softer border color */
-    --code-bg: #f5f5f5; /* Light code block background */
-    --code-block-bg: #3c3c3c; /* Dark code block background for better contrast */
+:root {
+    --theme: #f8f8f8;
+    --entry: #ffffff;
+    --primary: #333333;
+    --secondary: #5a5a5a;
+    --tertiary: #b0b0b0;
+    --border: #e0e0e0;
+    --code-bg: #f5f5f5;
+    --code-block-bg: #3c3c3c;
 }
 
-:root[data-theme="dark"] { /* Dark Theme */
-    --theme: #202020; /* Darker background */
-    --entry: #2c2c2c; /* Slightly lighter dark for content cards */
-    --primary: #e0e0e0; /* Light gray for main text */
-    --secondary: #aaaaaa; /* Lighter medium gray for secondary text */
-    --tertiary: #505050; /* Darker light gray */
-    --border: #383838; /* Darker border color */
-    --code-bg: #303030; /* Dark code background */
-    --code-block-bg: #282828; /* Even darker code block for contrast */
+:root[data-theme="dark"] {
+    --theme: #202020;
+    --entry: #2c2c2c;
+    --primary: #e0e0e0;
+    --secondary: #aaaaaa;
+    --tertiary: #505050;
+    --border: #383838;
+    --code-bg: #303030;
+    --code-block-bg: #282828;
 }
 
-/* Unbox first entry on homepage */
+/* Force first entry to be completely transparent */
 .first-entry {
+    background: transparent !important;
     background-color: transparent !important;
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
-    margin-bottom: var(--gap); /* Restore some spacing */
+    margin-bottom: var(--gap) !important;
+    min-height: 0 !important;
+}
+
+/* Minimal Home Info and Header spacing */
+.home-info {
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+}
+
+.main {
+    margin-top: 20px !important;
+}
+
+.home-info h1 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
 }

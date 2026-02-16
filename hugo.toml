@@ -91,4 +91,4 @@ defaultContentLanguage = 'pt'
         weight = 20
 
 [permalinks]
-  posts = "/:year/:month/:title/"
+  posts = "/:year/:month/:slug/"

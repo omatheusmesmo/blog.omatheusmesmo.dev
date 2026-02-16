@@ -31,11 +31,6 @@ defaultContentLanguage = 'pt'
     favicon32x32 = "/images/duke.svg"
     apple_touch_icon = "/images/duke.svg"
 
-  # Home Info Mode
-  [params.homeInfoParams]
-    Title = "Bem-vindo ao meu blog! 👋"
-    Content = "Oi, eu sou o Matheus Oliveira. Sou desenvolvedor focado em Java, Quarkus e Cloud. Aqui compartilho guias técnicos e experiências do meu dia a dia."
-
   # Disqus comments
   [params.comments]
     enabled = true
@@ -48,6 +43,9 @@ defaultContentLanguage = 'pt'
     title = "Matheus Oliveira"
     [languages.pt.params]
       description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
+      [languages.pt.params.homeInfoParams]
+        Title = "Bem-vindo ao meu blog! 👋"
+        Content = "Oi, eu sou o Matheus Oliveira. Sou desenvolvedor focado em Java, Quarkus e Cloud. Aqui compartilho guias técnicos e experiências do meu dia a dia."
     [languages.pt.menu]
       [[languages.pt.menu.main]]
         identifier = "about"
@@ -72,6 +70,9 @@ defaultContentLanguage = 'pt'
     title = "Matheus Oliveira"
     [languages.en.params]
       description = "A blog dedicated to sharing knowledge and experiences in software development, focusing on Java, its ecosystem, Angular, and Cloud."
+      [languages.en.params.homeInfoParams]
+        Title = "Welcome to my blog! 👋"
+        Content = "Hi, I'm Matheus Oliveira. I'm a developer focused on Java, Quarkus, and Cloud. Here I share technical guides and experiences from my daily life."
     [languages.en.menu]
       [[languages.en.menu.main]]
         identifier = "about"

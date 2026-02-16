@@ -1,6 +1,4 @@
-- id: categories
-  translation: "Categorias"
-- id: tags
-  translation: "Tags"
-- id: read_more
-  translation: "Leia mais"
+home_title: "Bem-vindo ao meu blog! 👋"
+home_subtitle: "Oi, eu sou o Matheus Oliveira. Sou desenvolvedor focado em Java, Quarkus e Cloud. Aqui compartilho guias técnicos e experiências do meu dia a dia."
+read_more: "Leia Mais"
+welcome: "Olá! Que bom que você chegou até aqui. ☕"

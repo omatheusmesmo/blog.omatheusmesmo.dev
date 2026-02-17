@@ -1,0 +1,40 @@
+name: Update Profile README
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'content/posts/**'
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    # Secure container-based execution
+    container:
+      image: node:20-slim
+    steps:
+      - name: Install Git
+        run: |
+          apt-get update && apt-get install -y git
+      - name: Checkout Blog Repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Profile Repo
+        uses: actions/checkout@v4
+        with:
+          repository: omatheusmesmo/omatheusmesmo
+          path: profile-repo
+          token: ${{ secrets.PROFILE_README_TOKEN }}
+
+      - name: Update README
+        run: node scripts/update-readme.js
+
+      - name: Push changes
+        run: |
+          cd profile-repo
+          git config user.name "Matheus Oliveira"
+          git config user.email "matheus.6148@gmail.com"
+          git add README.md
+          git commit -m "docs: update latest blog posts list" || exit 0
+          git push

@@ -67,18 +67,3 @@ article img {
     font-weight: 700 !important;
     margin-bottom: 10px !important;
 }
-
-/* Previne saltos de layout (CLS) reservando o espaco da imagem */
-.entry-cover img {
-    width: 100%;
-    height: auto;
-    display: block;
-    background-color: #f0f0f0; /* Cor de placeholder enquanto carrega */
-}
-
-/* Otimizacao para imagens responsivas dentro dos posts */
-.post-content img {
-    max-width: 100%;
-    height: auto;
-}
-

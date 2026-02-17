@@ -22,7 +22,7 @@
             <img loading="{{ $loading }}" {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
                  src="{{ $cover.RelPermalink }}" decoding="async" alt="{{ $alt }}">
         {{- else -}}
-            {{/* Reduzimos o tamanho mobile para 480px e o desktop para 1080px com qualidade 75% para economizar banda */}}
+            {{/* Geramos versões responsivas mas deixamos o CSS original ditar o tamanho visual */}}
             {{- $small := $cover.Resize "480x webp q75" -}}
             {{- $medium := $cover.Resize "720x webp q75" -}}
             {{- $large := $cover.Resize "1080x webp q80" -}}
@@ -34,7 +34,6 @@
                  sizes="(max-width: 768px) 100vw, 720px"
                  width="{{ $cover.Width }}" height="{{ $cover.Height }}"
                  decoding="async"
-                 style="aspect-ratio: {{ $cover.Width }} / {{ $cover.Height }}; object-fit: cover;"
                  alt="{{ $alt }}">
         {{- end -}}
     {{- else -}}

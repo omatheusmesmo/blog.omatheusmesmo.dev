@@ -3,7 +3,7 @@ const path = require('path');
 
 const POSTS_DIR = path.join(__dirname, '../content/posts');
 const README_PATH = path.join(__dirname, '../profile-repo/README.md');
-const BASE_URL = 'https://blog.omatheusmesmo.dev/posts';
+const BASE_URL = 'https://blog.omatheusmesmo.dev/en/posts';
 
 const START_MARKER = '<!-- BLOG-POST-LIST:START -->';
 const END_MARKER = '<!-- BLOG-POST-LIST:END -->';

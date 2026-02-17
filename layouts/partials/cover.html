@@ -1,6 +1,5 @@
 {{- with .cxt }}
 {{- if (and .Params.cover.image (not $.isHidden)) }}
-{{- /* Se for a página do post (Single), NUNCA é lazy. Se for a Home, tentamos detectar o primeiro */ -}}
 {{- $isFirst := false }}
 {{- if and $.IsHome (isset $ "Index") }}
     {{- if eq $.Index 0 }}
@@ -23,18 +22,19 @@
             <img loading="{{ $loading }}" {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
                  src="{{ $cover.RelPermalink }}" decoding="async" alt="{{ $alt }}">
         {{- else -}}
-            {{- $small := $cover.Resize "480x webp q75" -}}
-            {{- $medium := $cover.Resize "720x webp q75" -}}
-            {{- $large := $cover.Resize "1080x webp q80" -}}
+            {{/* Ajustamos para tamanhos menores e qualidade q70 para mobile */}}
+            {{- $small := $cover.Resize "480x webp q70" -}}
+            {{- $medium := $cover.Resize "640x webp q70" -}}
+            {{- $large := $cover.Resize "1080x webp q75" -}}
 
             <img loading="{{ $loading }}"
                  {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
-                 srcset="{{ $small.RelPermalink }} 480w, {{ $medium.RelPermalink }} 720w, {{ $large.RelPermalink }} 1080w"
+                 srcset="{{ $small.RelPermalink }} 480w, {{ $medium.RelPermalink }} 640w, {{ $large.RelPermalink }} 1080w"
                  src="{{ $large.RelPermalink }}"
-                 sizes="(max-width: 768px) 100vw, 720px"
+                 {{/* Mudamos para 640px para satisfazer o aviso do Google de imagem maior que o necessario */}}
+                 sizes="(max-width: 768px) 100vw, 640px"
                  width="{{ $cover.Width }}" height="{{ $cover.Height }}"
                  decoding="async"
-                 {{/* O style abaixo e o segredo para matar o CLS de vez */}}
                  style="aspect-ratio: {{ $cover.Width }} / {{ $cover.Height }}; height: auto;"
                  alt="{{ $alt }}">
         {{- end -}}

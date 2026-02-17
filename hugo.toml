@@ -1,6 +1,7 @@
 baseURL = 'https://blog.omatheusmesmo.dev/'
-canonifyURLs = false
-relativeURLs = true
+enableRobotsTXT = true
+canonifyURLs = true
+relativeURLs = false
 title = 'Matheus Oliveira'
 theme = 'PaperMod'
 defaultContentLanguage = 'pt'
@@ -15,7 +16,7 @@ defaultContentLanguage = 'pt'
   env = "production"
   title = "Matheus Oliveira"
   description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
-  author = "Me"
+  author = "Matheus Oliveira"
   defaultTheme = "auto"
   ShowShareButtons = true
   ShowReadingTime = true
@@ -23,7 +24,12 @@ defaultContentLanguage = 'pt'
   displayFullLangName = true
   images = ["/images/duke.svg"]
   
-  # Asset fingerprinting
+  # Social Meta Tags (Open Graph / Twitter Cards)
+  [params.social]
+    Twitter = "omatheusmesmo"
+    LinkedIn = "omatheusmesmo"
+    Github = "omatheusmesmo"
+    
   [params.assets]
     disableFingerprinting = false
     favicon = "/images/duke.svg"

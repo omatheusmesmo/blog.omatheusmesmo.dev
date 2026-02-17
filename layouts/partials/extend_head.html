@@ -1,6 +1,6 @@
 {{- $styles := resources.Get "css/extended/custom.css" | resources.Minify | resources.Fingerprint -}}
 {{- if $styles -}}
-<link crossorigin="anonymous" href="{{ $styles.Permalink }}" integrity="{{ $styles.Data.Integrity }}" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" rel="preload stylesheet" as="style">
 {{- end -}}
 
 {{- /* SEO and Social Media Extras */ -}}

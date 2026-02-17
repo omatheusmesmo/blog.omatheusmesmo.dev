@@ -1,6 +1,7 @@
 name: Update Profile README
 
 on:
+  workflow_dispatch: # Allows manual triggering
   push:
     branches:
       - main

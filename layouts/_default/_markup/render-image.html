@@ -1,12 +1,26 @@
 {{- $img := .Page.Resources.GetMatch .Destination -}}
 {{- if $img -}}
-  {{- $webp := $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
-  <img src="{{ $webp.Permalink }}" 
-       alt="{{ .Text }}" 
-       loading="lazy" 
-       decoding="async">
+  {{- if eq $img.MediaType.SubType "svg" -}}
+    <img src="{{ $img.RelPermalink }}" 
+         alt="{{ .Text }}" 
+         loading="lazy" 
+         decoding="async">
+  {{- else -}}
+    {{- $width := $img.Width -}}
+    {{- $height := $img.Height -}}
+    {{- $small := $img.Resize "720x webp" -}}
+    {{- $large := $img.Resize (printf "%dx%d webp" $width $height) -}}
+    <img src="{{ $large.RelPermalink }}" 
+         srcset="{{ $small.RelPermalink }} 720w, {{ $large.RelPermalink }} {{ $width }}w"
+         sizes="(max-width: 720px) 100vw, 720px"
+         alt="{{ .Text }}" 
+         width="{{ $width }}" 
+         height="{{ $height }}"
+         loading="lazy" 
+         decoding="async">
+  {{- end -}}
 {{- else -}}
-  <img src="{{ .Destination | absURL }}" 
+  <img src="{{ .Destination | relURL }}" 
        alt="{{ .Text }}" 
        loading="lazy" 
        decoding="async">

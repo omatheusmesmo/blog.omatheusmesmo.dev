@@ -70,37 +70,23 @@ function updateReadme() {
 
     // Featured posts (Visible)
     let markdown = featuredPosts
-        .map(post => `- **[${post.title}](${BASE_URL}/${post.slug}/)**  
-  ${post.summary}`)
-        .join('
-
-');
+        .map(post => `- **[${post.title}](${BASE_URL}/${post.slug}/)**  \n  ${post.summary}`)
+        .join('\n\n');
 
     // Archive (Expandable)
     if (archivedPosts.length > 0) {
-        markdown += `
-
-<details>
-<summary>📂 <b>View all posts (${archivedPosts.length} more)</b></summary>
-
-`;
+        markdown += `\n\n<details>\n<summary>📂 <b>View all posts (${archivedPosts.length} more)</b></summary>\n\n`;
         markdown += archivedPosts
             .map(post => `- [${post.title}](${BASE_URL}/${post.slug}/)`)
-            .join('
-');
-        markdown += `
-</details>`;
+            .join('\n');
+        markdown += `\n</details>`;
     }
 
     const readmeContent = fs.readFileSync(README_PATH, 'utf-8');
-    const markerRegex = new RegExp(`${START_MARKER}[\s\S]*${END_MARKER}`);
+    const markerRegex = new RegExp(`${START_MARKER}[\\s\\S]*${END_MARKER}`);
     
     if (markerRegex.test(readmeContent)) {
-        const newContent = `${START_MARKER}
-
-${markdown}
-
-${END_MARKER}`;
+        const newContent = `${START_MARKER}\n\n${markdown}\n\n${END_MARKER}`;
         fs.writeFileSync(README_PATH, readmeContent.replace(markerRegex, newContent));
         console.log('SUCCESS: Profile README updated successfully.');
     } else {

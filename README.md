@@ -1,62 +1,52 @@
-# 🚀 Meu Blog Pessoal com Hugo e PaperMod
+# 🚀 blog.omatheusmesmo.dev
 
-### 📝 Descrição
-Este blog é um espaço dedicado a compartilhar conhecimentos e experiências no vasto universo do desenvolvimento de software, com um foco especial em Java, seu ecossistema, Angular e Cloud. Meu objetivo é criar um repositório de insights e discussões que possam auxiliar outros desenvolvedores em suas jornadas, desde conceitos fundamentais até as tendências mais recentes.
+Hello! I'm **Matheus Oliveira**, known online as **@omatheusmesmo**. This repository contains the source code for my personal blog, a space dedicated to sharing insights, technical guides, and lessons learned in the software development universe.
 
-### ✨ Features
-*   Construído com Hugo, um gerador de sites estáticos super rápido.
-*   Tema moderno e minimalista PaperMod.
-*   Suporte a múltiplos idiomas (Português e Inglês).
-*   Otimizado para SEO e performance.
-*   Comentários integrados (Disqus - se configurado).
-*   Personalização de estilo via CSS.
+### ✍️ About the Blog
+I believe that **no code makes sense without the people behind it.** My goal here is to create a repository of knowledge focusing on:
+*   **Java Ecosystem:** From fundamental concepts to advanced Jakarta EE and Quarkus features.
+*   **Cloud Native:** Building scalable and resilient architectures.
+*   **Open Source:** Sharing the philosophy of collaborative development and my contributions to projects like Jakarta EE and Quarkus.
 
-### 🛠️ Tecnologias Utilizadas
-*   **Hugo:** Gerador de sites estáticos.
-*   **PaperMod:** Tema do Hugo, moderno e responsivo.
-*   **GitHub Pages:** Plataforma de hospedagem gratuita.
-*   **Git:** Sistema de controle de versão.
+---
 
-### ⚙️ Configuração para Desenvolvimento Local
-Para ter o ambiente de desenvolvimento local pronto, siga estes passos:
+### ✨ Repository Features
+*   **Fast & Lightweight:** Built with [Hugo](https://gohugo.io/), the world's fastest static site generator.
+*   **Modern Design:** Powered by the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme.
+*   **Multilingual:** Full support for **English** and **Portuguese**.
+*   **Performance Optimized:** Optimized for Google PageSpeed (WebP images, responsive sizes, and LCP/CLS fixes).
+*   **SEO Ready:** Sitemap, Robots.txt, and Canonical URLs configured.
+*   **Automated Workflow:** CI/CD via GitHub Actions.
 
-*   **Pré-requisitos:** Certifique-se de ter o [Hugo instalado](https://gohugo.io/getting-started/installing/).
-*   **Clonar o Repositório:**
-    1.  Clone o projeto: `git clone https://github.com/omatheusmesmo/blog.omatheusmesmo.dev.git`
-    2.  Navegue até a pasta do projeto: `cd blog.omatheusmesmo.dev`
-    3.  Inicialize os submódulos do tema: `git submodule update --init --recursive`
-*   **Rodar Localmente:**
-    *   Inicie o servidor de desenvolvimento do Hugo: `hugo server --baseURL / --buildDrafts`
-    *   A flag `--baseURL /` é importante para garantir que os links internos funcionem corretamente no ambiente local.
+### ⚙️ Local Development
+To get the development environment ready on your machine:
 
-### 🚀 Deployment (Publicação)
-O deployment deste blog é totalmente automatizado. Sempre que novas alterações são enviadas para a branch principal (`main`) no GitHub, um workflow de GitHub Actions é acionado. Este workflow constrói o site Hugo e o publica no GitHub Pages.
+*   **Prerequisites:** Ensure you have [Hugo Extended](https://gohugo.io/getting-started/installing/) installed.
+*   **Clone the Repository:**
+    ```bash
+    git clone https://github.com/omatheusmesmo/blog.omatheusmesmo.dev.git
+    cd blog.omatheusmesmo.dev
+    git submodule update --init --recursive
+    ```
+*   **Run Locally:**
+    ```bash
+    hugo server --buildDrafts
+    ```
 
-O blog está configurado para ser acessível através do domínio personalizado `blog.omatheusmesmo.dev`.
+### 🚀 Deployment
+Deployment is fully automated. Every push to the `main` branch triggers a GitHub Action that builds the site and publishes it to **GitHub Pages**. The blog is accessible via my custom domain: [blog.omatheusmesmo.dev](https://blog.omatheusmesmo.dev).
 
-### 🎨 Personalização
-Você pode personalizar diversos aspectos do blog:
+### ✍️ Creating Content
+To generate a new post bundle:
+```bash
+hugo new content posts/your-post-slug/index.en.md
+```
 
-*   **Estilos CSS:** Ajuste ou adicione estilos no arquivo `assets/css/extended/custom.css`.
-*   **Configurações do Site:** Modifique o arquivo de configuração principal `hugo.toml` para alterar parâmetros globais, como título, descrição, configurações de idioma e Disqus.
-*   **Seções 'Sobre':** Personalize o conteúdo das suas páginas 'Sobre' nos arquivos `content/about.en.md` e `content/about.pt.md`.
+---
 
-### ✍️ Criação de Conteúdo
-Para criar um novo post:
+### 📧 Let's Connect
+Whether you want to talk about Java, Open Source, or Cloud Architecture, I'd love to hear from you:
 
-*   Utilize o comando do Hugo para gerar um novo arquivo Markdown, por exemplo:
-    `hugo new content posts/meu-novo-post/index.pt.md`
-*   Edite o `front matter` (cabeçalho YAML) do seu novo post, incluindo:
-    *   `title`: Título do post.
-    *   `date`: Data de publicação.
-    *   `tags`: Lista de tags relevantes.
-    *   `description`: Um breve resumo para miniaturas de redes sociais.
-    *   `images`: Caminho para a imagem de capa ou miniatura (ex: `["/images/minha-imagem.jpg"]`).
-    *   `summary`: Um resumo breve do conteúdo para exibição em listagens de posts no site.
-
-### 📧 Contato
-Sinta-se à vontade para se conectar:
-
-*   **LinkedIn:** [https://www.linkedin.com/in/omatheusmesmo/](https://www.linkedin.com/in/omatheusmesmo/)
-*   **GitHub:** [omatheusmesmo](https://github.com/omatheusmesmo)
-*   **Email:** [matheus.6148@gmail.com](mailto:matheus.6148@gmail.com)
+*   **LinkedIn:** [Matheus Oliveira](https://www.linkedin.com/in/omatheusmesmo/)
+*   **GitHub:** [@omatheusmesmo](https://github.com/omatheusmesmo)
+*   **Email:** [hi@omatheusmesmo.dev](mailto:hi@omatheusmesmo.dev)

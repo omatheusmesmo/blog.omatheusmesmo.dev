@@ -3,7 +3,7 @@ const path = require('path');
 
 const POSTS_DIR = path.join(__dirname, '../content/posts');
 const README_PATH = path.join(__dirname, '../profile-repo/README.md');
-const BASE_URL = 'https://blog.omatheusmesmo.dev/en/posts';
+const BASE_URL = 'https://blog.omatheusmesmo.dev/posts';
 
 const START_MARKER = '<!-- BLOG-POST-LIST:START -->';
 const END_MARKER = '<!-- BLOG-POST-LIST:END -->';
@@ -24,20 +24,25 @@ function getLatestPosts() {
             if (fs.existsSync(filePath)) {
                 const content = fs.readFileSync(filePath, 'utf-8');
                 
-                const titleMatch = content.match(/title:\s*["'](.*?)["']/);
-                const dateMatch = content.match(/date:\s*(.*)/);
-                const slugMatch = content.match(/slug:\s*["'](.*?)["']/);
-                const draftMatch = content.match(/draft:\s*(true|false)/);
-                const summaryMatch = content.match(/summary:\s*["'](.*?)["']/);
+                // More robust regex for YAML front matter
+                const titleMatch = content.match(/^title:\s*["'](?<title>.*?)["']\s*$/m);
+                const dateMatch = content.match(/^date:\s*(?<date>.*)\s*$/m);
+                const slugMatch = content.match(/^slug:\s*["'](?<slug>.*?)["']\s*$/m);
+                const draftMatch = content.match(/^draft:\s*(?<draft>true|false)\s*$/m);
+                const summaryMatch = content.match(/^summary:\s*["'](?<summary>.*?)["']\s*$/m);
 
-                const isDraft = draftMatch ? draftMatch[1] === 'true' : false;
+                const isDraft = draftMatch ? draftMatch.groups.draft === 'true' : false;
 
                 if (!isDraft && titleMatch && dateMatch) {
+                    const title = titleMatch.groups.title;
+                    const slug = slugMatch ? slugMatch.groups.slug : folder;
+                    console.log(`Processing: "${title}" (${slug})`);
+                    
                     posts.push({
-                        title: titleMatch[1],
-                        date: new Date(dateMatch[1]),
-                        slug: slugMatch ? slugMatch[1] : folder,
-                        summary: summaryMatch ? summaryMatch[1] : ''
+                        title: title,
+                        date: new Date(dateMatch.groups.date),
+                        slug: slug,
+                        summary: summaryMatch ? summaryMatch.groups.summary : ''
                     });
                 }
             }

@@ -24,7 +24,6 @@ function getLatestPosts() {
             if (fs.existsSync(filePath)) {
                 const content = fs.readFileSync(filePath, 'utf-8');
                 
-                // Extract Front Matter metadata
                 const titleMatch = content.match(/title:\s*["'](.*?)["']/);
                 const dateMatch = content.match(/date:\s*(.*)/);
                 const slugMatch = content.match(/slug:\s*["'](.*?)["']/);
@@ -45,6 +44,7 @@ function getLatestPosts() {
         }
     });
 
+    // Sort by date DESC (Newest first)
     return posts.sort((a, b) => b.date - a.date);
 }
 
@@ -60,20 +60,19 @@ function updateReadme() {
     console.log(`Found ${allPosts.length} published posts.`);
 
     if (allPosts.length === 0) {
-        console.log('No posts to display. Skipping update.');
+        console.log('No posts found. Skipping update.');
         return;
     }
 
+    // Featured = 5 most recent posts
     const featuredCount = 5;
     const featuredPosts = allPosts.slice(0, featuredCount);
     const archivedPosts = allPosts.slice(featuredCount);
 
-    // Featured posts (Visible)
     let markdown = featuredPosts
         .map(post => `- **[${post.title}](${BASE_URL}/${post.slug}/)**  \n  ${post.summary}`)
         .join('\n\n');
 
-    // Archive (Expandable)
     if (archivedPosts.length > 0) {
         markdown += `\n\n<details>\n<summary>📂 <b>View all posts (${archivedPosts.length} more)</b></summary>\n\n`;
         markdown += archivedPosts
@@ -88,9 +87,9 @@ function updateReadme() {
     if (markerRegex.test(readmeContent)) {
         const newContent = `${START_MARKER}\n\n${markdown}\n\n${END_MARKER}`;
         fs.writeFileSync(README_PATH, readmeContent.replace(markerRegex, newContent));
-        console.log('SUCCESS: Profile README updated successfully.');
+        console.log('SUCCESS: Profile README updated with latest posts.');
     } else {
-        console.error('ERROR: Markers <!-- BLOG-POST-LIST:START --> and <!-- BLOG-POST-LIST:END --> not found in README.');
+        console.error('ERROR: Markers not found in README.');
         process.exit(1);
     }
 }

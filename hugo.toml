@@ -106,5 +106,5 @@ defaultContentLanguage = 'pt'
 
 [imaging]
   resampleFilter = "Lanczos"
-  quality = 85
+  quality = 75
   anchor = "smart"

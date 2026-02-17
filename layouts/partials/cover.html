@@ -1,12 +1,11 @@
 {{- with .cxt }}
 {{- if (and .Params.cover.image (not $.isHidden)) }}
+{{- /* Detecção robusta do primeiro post para LCP */ -}}
 {{- $isFirst := false }}
-{{- if and $.IsHome (not $.isHidden) }}
-    {{- /* O PaperMod passa o contexto da pagina no dicionario */ -}}
-    {{- $pages := (where site.RegularPages "Section" "posts") | first 1 -}}
-    {{- if in $pages .cxt -}}
-        {{- $isFirst = true -}}
-    {{- end -}}
+{{- if and $.IsHome (isset $ "Index") }}
+    {{- if eq $.Index 0 }}
+        {{- $isFirst = true }}
+    {{- end }}
 {{- end }}
 
 {{- $isLCP := or $.IsSingle $isFirst -}}
@@ -15,35 +14,43 @@
 
 <figure class="entry-cover">
     {{- $alt := (.Params.cover.alt | default .Params.cover.caption | plainify) }}
-    {{- $pageBundleCover := (.Resources.ByType "image").GetMatch (printf "*%s*" (.Params.cover.image)) }}
-    {{- $globalResourcesCover := (resources.ByType "image").GetMatch (printf "*%s*" (.Params.cover.image)) }}
-    {{- $cover := (or $pageBundleCover $globalResourcesCover)}}
+    
+    {{/* Busca a imagem usando um seletor mais flexivel */}}
+    {{- $cover := (.Resources.ByType "image").GetMatch (printf "*%s*" .Params.cover.image) }}
+    {{- if not $cover }}
+        {{- $cover = (resources.ByType "image").GetMatch (printf "*%s*" .Params.cover.image) }}
+    {{- end }}
 
     {{- if $cover -}}
         {{- if eq $cover.MediaType.SubType "svg" -}}
             <img loading="{{ $loading }}" {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
                  src="{{ $cover.RelPermalink }}" decoding="async" alt="{{ $alt }}">
         {{- else -}}
-            {{/* Ajustamos para tamanhos menores e qualidade q70 para mobile */}}
-            {{- $small := $cover.Resize "480x webp q70" -}}
-            {{- $medium := $cover.Resize "640x webp q70" -}}
-            {{- $large := $cover.Resize "1080x webp q75" -}}
+            {{/* Otimizacao WebP com srcset responsivo */}}
+            {{- $small := $cover.Resize "480x webp q75" -}}
+            {{- $medium := $cover.Resize "720x webp q75" -}}
+            {{- $large := $cover.Resize "1080x webp q80" -}}
 
             <img loading="{{ $loading }}"
                  {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
-                 srcset="{{ $small.RelPermalink }} 480w, {{ $medium.RelPermalink }} 640w, {{ $large.RelPermalink }} 1080w"
+                 srcset="{{ $small.RelPermalink }} 480w, {{ $medium.RelPermalink }} 720w, {{ $large.RelPermalink }} 1080w"
                  src="{{ $large.RelPermalink }}"
-                 {{/* Mudamos para 640px para satisfazer o aviso do Google de imagem maior que o necessario */}}
-                 sizes="(max-width: 768px) 100vw, 640px"
+                 sizes="(max-width: 768px) 100vw, 720px"
                  width="{{ $cover.Width }}" height="{{ $cover.Height }}"
                  decoding="async"
-                 style="aspect-ratio: {{ $cover.Width }} / {{ $cover.Height }}; height: auto;"
+                 {{/* Mantemos o aspect-ratio para zerar o CLS sem forçar largura 100% */}}
+                 style="aspect-ratio: {{ $cover.Width }} / {{ $cover.Height }}; height: auto; max-width: 100%;"
                  alt="{{ $alt }}">
         {{- end -}}
     {{- else -}}
-        {{- $imgdl := (.Params.cover.image) | absURL }}
-        <img loading="{{ $loading }}" {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }} 
-             src="{{ $imgdl }}" alt="{{ $alt }}">
+        {{/* Fallback para quando o Hugo nao consegue processar a imagem (evita 404) */}}
+        {{- $src := .Params.cover.image -}}
+        {{- if .Params.cover.relative -}}
+            {{- $src = (path.Join .RelPermalink .Params.cover.image) | relURL -}}
+        {{- else -}}
+            {{- $src = $src | relURL -}}
+        {{- end }}
+        <img loading="{{ $loading }}" src="{{ $src }}" alt="{{ $alt }}">
     {{- end }}
 
     {{- if $.IsSingle }}

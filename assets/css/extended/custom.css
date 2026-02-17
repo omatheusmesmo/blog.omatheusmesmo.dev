@@ -76,3 +76,10 @@ article img {
     font-weight: 700 !important;
     margin-bottom: 10px !important;
 }
+
+/* Estabilidade visual para capas */
+.entry-cover {
+    min-height: 100px; /* Garante um espaco minimo inicial */
+    margin-bottom: 20px;
+}
+

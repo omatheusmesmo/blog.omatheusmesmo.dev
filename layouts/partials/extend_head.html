@@ -21,6 +21,19 @@
 </script>
 {{- end -}}
 
+{{- if .IsHome -}}
+  {{- $first_post := (where site.RegularPages "Section" "posts") | first 1 -}}
+  {{- range $first_post -}}
+    {{- with .Params.cover.image -}}
+      {{- $img := $.Resources.GetMatch . -}}
+      {{- if $img -}}
+        {{- $optimized := $img.Resize "1080x webp q80" -}}
+        <link rel="preload" as="image" href="{{ $optimized.RelPermalink }}" fetchpriority="high">
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 <meta name="apple-mobile-web-app-title" content="{{ site.Title }}">
 <meta name="application-name" content="{{ site.Title }}">
 <meta name="msapplication-TileColor" content="#2e2e33">

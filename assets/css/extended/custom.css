@@ -9,13 +9,23 @@ article img {
 }
 
 /* Restrict the size of the cover image in posts */
+.entry-cover {
+    width: 100%;
+    margin-bottom: 20px;
+    background: #f5f5f5; /* Placeholder color */
+    overflow: hidden;
+}
+
 .entry-cover img {
     max-width: 100%;
     max-height: 400px;
     width: auto;
+    height: auto;
     margin: 0 auto;
     display: block;
     object-fit: cover;
+    /* Suporte para navegadores modernos reservarem espaco */
+    aspect-ratio: attr(width) / attr(height);
 }
 
 /* Custom Color Palette Overrides */

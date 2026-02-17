@@ -1,10 +1,12 @@
 {{- with .cxt }}
 {{- if (and .Params.cover.image (not $.isHidden)) }}
 {{- $isFirst := false }}
-{{- if and $.IsHome (isset $ "Index") }}
-    {{- if eq $.Index 0 }}
-        {{- $isFirst = true }}
-    {{- end }}
+{{- if and $.IsHome (not $.isHidden) }}
+    {{- /* O PaperMod passa o contexto da pagina no dicionario */ -}}
+    {{- $pages := (where site.RegularPages "Section" "posts") | first 1 -}}
+    {{- if in $pages .cxt -}}
+        {{- $isFirst = true -}}
+    {{- end -}}
 {{- end }}
 
 {{- $isLCP := or $.IsSingle $isFirst -}}

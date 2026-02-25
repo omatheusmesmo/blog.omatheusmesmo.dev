@@ -14,7 +14,7 @@ cover:
   relative: true
 ---
 
-*This article is part of a series based on the book "Quarkus for Spring Developers".*
+*This article is part of the ["Quarkus for Spring Developers"](https://blog.omatheusmesmo.dev/en/tags/quarkus-for-spring-developers/) series.*
 
 The Java world has changed. If you come from the Spring ecosystem, you are used to a framework that does almost everything at runtime. But Quarkus has arrived to flip the script by introducing the concept of **`Build-time Efficiency`**. In this article, we will dive into the heart of Quarkus: **`ArC`** and its Dependency Injection system, building an order service from scratch.
 

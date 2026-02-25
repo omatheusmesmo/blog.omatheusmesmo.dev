@@ -14,18 +14,18 @@ cover:
   relative: true
 ---
 
-*Este artigo faz parte de uma série de artigos sobre o livro Quarkus for Spring Developers.*
+*Este artigo faz parte da série ["Quarkus for Spring Developers"](https://blog.omatheusmesmo.dev/tags/quarkus-for-spring-developers/).*
 
 O mundo Java mudou. Se você vem do ecossistema Spring, está acostumado com um framework que faz quase tudo em tempo de execução. Mas o Quarkus chegou para virar esse jogo, trazendo o conceito de **`Build-time Efficiency`**. Neste artigo, vamos mergulhar no coração do Quarkus: o **`ArC`** e o seu sistema de Injeção de Dependência, construindo um serviço de pedidos do zero.
 
 ## Mãos à obra: Criando o Projeto
 
-Para começar, vamos gerar o nosso projeto via terminal. Note que já incluímos as extensões necessárias para RESTEasy e o suporte ao CDI Lite 4.1 que já vem no Core.
+Para começar, vamos gerar o nosso projeto via terminal. Note que já incluímos as extensões necessárias para **Quarkus REST** e o suporte ao CDI Lite 4.1 que já vem no Core.
 
 ### Usando Quarkus CLI:
 ```bash
 quarkus create app org.acme:injecao-dependencia \
-    --extension="resteasy" \
+    --extension="quarkus-rest" \
     --no-code
 ```
 
@@ -34,7 +34,7 @@ quarkus create app org.acme:injecao-dependencia \
 mvn io.quarkus.platform:quarkus-maven-plugin:3.31.1:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=injecao-dependencia \
-    -Dextensions="resteasy" \
+    -Dextensions="quarkus-rest" \
     -DnoCode
 ```
 
@@ -64,18 +64,17 @@ Embora ambos criem instâncias únicas, prefira sempre o **`@ApplicationScoped`*
 
 ## Implementando o nosso Serviço de Pedidos
 
-Vamos criar o nosso primeiro Bean. No Spring, você usaria **`@Service`**, aqui usaremos **`@ApplicationScoped`**. Repare que não usamos **`private`** nos campos para seguir as boas práticas que comentamos.
+Vamos criar o nosso primeiro Bean. No Spring, você usaria **`@Service`**, aqui usaremos **`@ApplicationScoped`**. Repare que não usamos **`private`** nos campos e adicionamos o **`Logger`** para monitorar o processamento.
 
 ```java
-package org.acme;
-
-import jakarta.enterprise.context.ApplicationScoped;
-
 @ApplicationScoped
 public class OrderService {
     
+    private static final Logger LOG = Logger.getLogger(OrderService.class);
+
     public String process() {
-        return "Pedido processado com sucesso!";
+        LOG.info("Processing order business logic...");
+        return "Order processed successfully!";
     }
 }
 ```
@@ -115,6 +114,8 @@ Agora, vamos tornar o serviço dinâmico usando o **`@ConfigProperty`**. Diferen
 @ApplicationScoped
 public class OrderService {
 
+    private static final Logger LOG = Logger.getLogger(OrderService.class);
+
     final TaxService taxService;
 
     @ConfigProperty(name = "order.service.fee", defaultValue = "5.0")
@@ -125,6 +126,7 @@ public class OrderService {
     }
 
     public double calculateTotal(double amount) {
+        LOG.infof("Calculating total for amount %.2f with fee %.2f", amount, serviceFee);
         double tax = amount * taxService.getRate();
         return amount + tax + serviceFee;
     }

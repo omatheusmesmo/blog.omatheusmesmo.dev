@@ -12,7 +12,7 @@ cover:
   relative: true
 ---
 
-*Este artigo faz parte de uma série de artigos sobre o livro Quarkus for Spring Developers.*
+*Este artigo faz parte da série ["Quarkus for Spring Developers"](https://blog.omatheusmesmo.dev/tags/quarkus-for-spring-developers/).*
 
 ## O Ponto de Partida: Onde tudo nasce
 

@@ -14,7 +14,7 @@ cover:
   relative: true
 ---
 
-*This article is part of a series based on the book 'Quarkus for Spring Developers'.*
+*This article is part of the ["Quarkus for Spring Developers"](https://blog.omatheusmesmo.dev/en/tags/quarkus-for-spring-developers/) series.*
 
 ## Java in the Age of Dinosaurs: The J2EE Era and Application Servers
 

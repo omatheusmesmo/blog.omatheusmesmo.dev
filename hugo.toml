@@ -96,6 +96,11 @@ defaultContentLanguage = 'pt'
         url = "/tags/"
         weight = 20
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+
 [permalinks]
   posts = "/posts/:slug/"
 

@@ -1,6 +1,6 @@
 ---
 title: "Stop Writing Manual Validations: The Definitive Guide to Bean Validation and DTOs in Quarkus"
-date: 2026-03-18T09:00:00-03:00
+date: 2026-03-18T12:00:00-03:00
 draft: false
 tags: ["Quarkus", "Spring", "Java", "Validation", "DTO", "Jakarta EE", "Hibernate Validator", "Quarkus for Spring Developers"]
 author: "Matheus Oliveira"

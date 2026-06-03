@@ -44,7 +44,7 @@ defaultContentLanguage = 'pt'
 [languages]
   [languages.pt]
     languageCode = "pt-br"
-    languageName = "🇧🇷 Portugês"
+    languageName = "🇧🇷 Português"
     weight = 1
     title = "Matheus Oliveira"
     [languages.pt.params]

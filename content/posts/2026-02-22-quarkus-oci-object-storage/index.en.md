@@ -49,7 +49,7 @@ Unlike a folder on a server, **Object Storage** is a highly available and scalab
 ### Is it Free? (Always Free Limits)
 Oracle Object Storage is one of the most generous on the market for developers:
 - **Storage:** 20 GB free forever (Object and Archive Storage combined).
-- **Requests:** Up to 50,000 API calls per month. 
+- **Requests:** Up to 50,000 API calls per month.
 - **Transfer:** 10 TB of data egress per month.
 
 **Financial Security Tip:** Unlike **AWS**, where overusage is automatically charged to your card (which can lead to unexpected bills), on an **Oracle Always Free** account, the service simply stops responding if the limit is reached. You have a native "safety latch": it's either free or it doesn't work. There are no surprise charges without you manually upgrading your account.
@@ -191,7 +191,7 @@ public class OciObjectStorageService {
 
             CreatePreauthenticatedRequestResponse parResponse = objectStorageClient.createPreauthenticatedRequest(parRequest);
             String accessUri = parResponse.getPreauthenticatedRequest().getAccessUri();
-            
+
             String fullPreauthenticatedRequestUrl = String.format("https://objectstorage.%s.oraclecloud.com%s", region, accessUri);
             LOG.debug("PAR successfully created: " + fullPreauthenticatedRequestUrl);
             return fullPreauthenticatedRequestUrl;
@@ -203,7 +203,7 @@ public class OciObjectStorageService {
 
     public String getObjectUrl(String objectName) {
         String namespace = namespaceName.orElse("your_namespace");
-        return String.format("https://objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s", 
+        return String.format("https://objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s",
                 region, namespace, bucketName, objectName);
     }
 }
@@ -289,8 +289,8 @@ Let's simulate uploading a real image named `linux-open-source.png`.
 
 ### 1. Create the Article
 ```bash
-curl -X POST http://localhost:8080/articles 
-  -H "Content-Type: application/json" 
+curl -X POST http://localhost:8080/articles
+  -H "Content-Type: application/json"
   -d '{
     "title": "Open Source Attack: The Power of Linux",
     "author": "Matheus Oliveira",
@@ -317,8 +317,8 @@ curl -X POST "http://localhost:8080/articles/1053/cover-upload-url?fileName=linu
 ### 3. Execute Direct Upload to Oracle
 The computer (or frontend) sends the image directly to Oracle's cloud using the `parUrl`:
 ```bash
-curl -X PUT -H "Content-Type: image/png" 
-     --data-binary "@./images/linux-open-source.png" 
+curl -X PUT -H "Content-Type: image/png"
+     --data-binary "@./images/linux-open-source.png"
      "YOUR_PAR_URL_HERE"
 ```
 
@@ -332,7 +332,7 @@ Access the `objectUrl` returned in step 2 directly in your browser:
 
 By delegating storage to Object Storage, you ensure your application supports thousands of simultaneous uploads without ever degrading API performance. Your images now reside on global infrastructure, ready to be served ultra-fast and securely.
 
-In the next article, we will dive into **OCI Streaming (Kafka)** to process events asynchronously.
+In the next article, we will dive into **OCI Notifications (ONS)** to process events asynchronously on the Always Free tier.
 
 ---
 ## Resources

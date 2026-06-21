@@ -6,29 +6,34 @@ layout: "about"
 slug: "about"
 ---
 
-Hello! I'm glad you're here. ☕
+## About Me
 
-I'm **Matheus Oliveira**, known online as **@omatheusmesmo**. I am a software developer who believes that **no code makes sense without the people behind it.**
+Most Java developers know Quarkus. Few understand the Quarkus Way.
 
-### 🛠️ What I Work On
-My expertise lies in the **Java** ecosystem and building scalable architectures. For me, software development is more than just writing code; it's about solving real problems and creating a positive impact for those who use the software.
+The Quarkus Way is more than using a framework. It is a shift in how you think about building Java applications: startup in milliseconds, minimal memory footprint, compile-time optimization, and developer joy through live reload. When you master this approach, you stop building Java apps the old way and start building software that is truly cloud native.
 
-### 🌍 Open Source Contributions
-I'm a firm believer in the Open Source philosophy and the power of shared knowledge. My journey has allowed me to contribute to some of the industry's most significant projects:
+I help professional Java developers make that shift.
 
-* **Jakarta EE & Quarkus**: I actively contribute to these global standards and frameworks, helping shape the future of enterprise and Kubernetes-native Java.
-* **BuildCLI**: I served as one of the lead maintainers of this automation tool, a project that granted me valuable visibility and experience within the community.
+### 🔹 Open Source Contributions Across the Quarkus Ecosystem
 
-### ✍️ Why This Blog?
-This blog is where I document my journey, sharing both my insights and the lessons learned from the things I've broken along the way. I write about Java, Cloud, architecture, and the human side of being a developer.
+* **Quarkus LangChain4j** — Built the `@OnThinking` annotation for reasoning output handlers, added named embedding store support across six databases (pgvector, Chroma, Milvus, Neo4j, Weaviate, Qdrant), introduced the Oracle embedding store extension, implemented audio transcription for OpenAI, added support for additional model options in Ollama, and enabled named OIDC clients in `OidcClientMcpAuthProvider`.
+* **Quarkus Roq & Qute Web** — Enhanced the Roq Editor with SSH agent integration for secure git sync, and added GFM alert block support to the Qute Web markdown plugin.
+* **pt.quarkus.io** — As maintainer of the Brazilian Portuguese translation, I fixed broken guides after upstream Web Components migration, improved contributor onboarding with `CONTRIBUTING.md`, and translated key documentation.
+* **Quarkus Core** — Contributed Javadoc for build item documentation (`ApplicationInfoBuildItem`, `AdditionalClassLoaderResourcesBuildItem`).
 
-I hope you find something here that helps you on your own journey as much as sharing it helps me on mine.
+### 🔹 Production Experience at Scale
+
+AWS Certified and focused on cloud-native architectures. As a Software Engineer at BMW Group TechWorks Brasil powered by act digital, I build cloud-native applications with Quarkus, Angular, and AWS. My broader background includes Spring Boot, messaging (Kafka, RabbitMQ, SQS/SNS), and CI/CD automation.
+
+### 🔹 From Music to Code
+
+My path to software engineering was unconventional. Before code, I spent seven years as a music teacher, developing the analytical ear and collaborative discipline that now drive my work in agile teams. That background taught me something valuable: the best engineers, like the best musicians, are the ones who listen before they play.
+
+If you are building with Quarkus, contributing to the ecosystem, or looking for someone who lives the Quarkus Way, let's connect.
 
 ---
 
 ### Let's Connect
-
-Whether you want to talk about Java, open source, or architecture, I'd love to hear from you:
 
 * 📧 **Email:** [hi@omatheusmesmo.dev](mailto:hi@omatheusmesmo.dev)
 * 🔗 **GitHub:** [@omatheusmesmo](https://github.com/omatheusmesmo)

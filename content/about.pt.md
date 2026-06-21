@@ -6,29 +6,34 @@ layout: "about"
 slug: "about"
 ---
 
-Olá! Que bom que você chegou até aqui. ☕
+## Sobre Mim
 
-Sou o **Matheus Oliveira**, conhecido no mundo digital como **@omatheusmesmo**. Sou um desenvolvedor de software que acredita piamente que **código nenhum faz sentido sem as pessoas por trás dele.**
+A maioria dos desenvolvedores Java conhece o Quarkus. Poucos entendem o jeito Quarkus.
 
-### 🛠️ No que eu trabalho
-Meu foco principal é o ecossistema **Java** e o desenvolvimento de arquiteturas escaláveis. Para mim, o desenvolvimento de software vai além de apenas escrever código; é sobre resolver problemas reais e facilitar a vida de quem usa o sistema no fim do dia.
+O Jeito Quarkus é mais do que usar um framework. É uma mudança na forma como você pensa sobre a criação de aplicações Java: inicialização em milissegundos, footprint mínimo de memória, otimização em tempo de compilação e prazer do desenvolvedor através de live reload. Quando você domina essa abordagem, para de construir apps Java do jeito antigo e começa a construir software que é verdadeiramente cloud native.
 
-### 🌍 Contribuições Open Source
-Acredito no poder do compartilhamento de conhecimento e na filosofia do código aberto. Minha jornada me permitiu deixar minha marca em alguns dos projetos mais significativos da indústria:
+Eu ajudo desenvolvedores Java profissionais a fazerem essa mudança.
 
-* **Jakarta EE & Quarkus**: Contribuo ativamente para esses padrões e frameworks globais, ajudando a moldar o futuro do Java corporativo e nativo para nuvem.
-* **BuildCLI**: Atuei como um dos principais mantenedores desta ferramenta de automação, um projeto que me trouxe uma visibilidade valiosa e muita experiência prática dentro da comunidade.
+### 🔹 Contribuições Open Source no Ecossistema Quarkus
 
-### ✍️ Por que este blog?
-Este espaço nasceu do desejo de documentar minha jornada e compartilhar tanto meus insights quanto as lições aprendidas com o que quebrei no caminho. Aqui falo sobre Java, Cloud, arquitetura e o lado humano de ser um desenvolvedor.
+* **Quarkus LangChain4j** — Criei a anotação `@OnThinking` para handlers de saída de raciocínio, adicionei suporte a embedding stores nomeados em seis bancos de dados (pgvector, Chroma, Milvus, Neo4j, Weaviate, Qdrant), introduzi a extensão Oracle embedding store, implementei transcrição de áudio para OpenAI, adicionei suporte a opções adicionais de modelo no Ollama, e habilitei clientes OIDC nomeados em `OidcClientMcpAuthProvider`.
+* **Quarkus Roq & Qute Web** — Aprimorei o Roq Editor com integração de agente SSH para sincronização segura de git, e adicionei suporte a blocos de alerta GFM no plugin de markdown do Qute Web.
+* **pt.quarkus.io** — Como mantenedor da tradução para o português brasileiro, corrigi guias quebrados após a migração de Web Components upstream, melhorei o onboarding de contribuidores com `CONTRIBUTING.md`, e traduzi documentação essencial.
+* **Quarkus Core** — Contribuí com Javadoc para documentação de build items (`ApplicationInfoBuildItem`, `AdditionalClassLoaderResourcesBuildItem`).
 
-Espero que o conteúdo por aqui te ajude na sua própria jornada, tanto quanto escrevê-lo me ajuda na minha.
+### 🔹 Experiência de Produção em Escala
+
+Certificado AWS e focado em arquiteturas cloud-native. Como Engenheiro de Software no BMW Group TechWorks Brasil, movido pela act digital, construo aplicações cloud-native com Quarkus, Angular e AWS. Minha experiência mais ampla inclui Spring Boot, messaging (Kafka, RabbitMQ, SQS/SNS) e automação de CI/CD.
+
+### 🔹 Da Música ao Código
+
+Meu caminho até a engenharia de software foi convencional. Antes do código, fui professor de música por sete anos, desenvolvendo o ouvido analítico e a disciplina colaborativa que agora impulsionam meu trabalho em equipes ágeis. Essa experiência me ensinou algo valioso: os melhores engenheiros, assim como os melhores músicos, são os que ouvem antes de tocar.
+
+Se você está construindo com Quarkus, contribuindo para o ecossistema, ou buscando alguém que vive o Jeito Quarkus, vamos nos conectar.
 
 ---
 
-### Vamos conversar?
-
-Se você gosta de falar sobre desenvolvimento Java, open source ou arquitetura, será um prazer trocar uma ideia:
+### Vamos Conversar
 
 * 📧 **Email:** [hi@omatheusmesmo.dev](mailto:hi@omatheusmesmo.dev)
 * 🔗 **GitHub:** [@omatheusmesmo](https://github.com/omatheusmesmo)

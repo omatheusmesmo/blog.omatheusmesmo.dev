@@ -23,13 +23,13 @@ defaultContentLanguage = 'pt'
   displayFullWidth = false
   displayFullLangName = true
   images = ["/images/duke.svg"]
-  
+
   # Social Meta Tags (Open Graph / Twitter Cards)
   [params.social]
     Twitter = "omatheusmesmo"
     LinkedIn = "omatheusmesmo"
     Github = "omatheusmesmo"
-    
+
   [params.assets]
     disableFingerprinting = false
     favicon = "/images/duke.svg"
@@ -51,7 +51,7 @@ defaultContentLanguage = 'pt'
       description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
       [languages.pt.params.homeInfoParams]
         Title = "Bem-vindo ao meu blog! 👋"
-        Content = "Oi, eu sou o Matheus Oliveira. Sou desenvolvedor focado em Java, Quarkus e Cloud. Aqui compartilho guias técnicos e experiências do meu dia a dia."
+        Content = "I help professional Java developers master the 'Quarkus Way', empowering them to build high-performing apps and become highly valued engineers. Soli Deo Gloria!"
     [languages.pt.menu]
       [[languages.pt.menu.main]]
         identifier = "about"
@@ -68,7 +68,7 @@ defaultContentLanguage = 'pt'
         name = "Tags"
         url = "/tags/"
         weight = 20
-      
+
   [languages.en]
     languageCode = "en-us"
     languageName = "🇺🇸 English"
@@ -78,7 +78,7 @@ defaultContentLanguage = 'pt'
       description = "A blog dedicated to sharing knowledge and experiences in software development, focusing on Java, its ecosystem, Angular, and Cloud."
       [languages.en.params.homeInfoParams]
         Title = "Welcome to my blog! 👋"
-        Content = "Hi, I'm Matheus Oliveira. I'm a developer focused on Java, Quarkus, and Cloud. Here I share technical guides and experiences from my daily life."
+        Content = "I help professional Java developers master the 'Quarkus Way', empowering them to build high-performing apps and become highly valued engineers. Soli Deo Gloria!"
     [languages.en.menu]
       [[languages.en.menu.main]]
         identifier = "about"

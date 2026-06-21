@@ -83,3 +83,83 @@ article img {
     margin-bottom: 20px;
 }
 
+/* Mentorship CTA - Home */
+.mentorship-home-cta {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.mentorship-home-cta button {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mentorship-home-cta button:hover {
+    background: var(--primary);
+    color: var(--theme);
+}
+
+/* Mentorship Menu Item - Home Header */
+#menu-mentorship {
+    list-style: none;
+    display: flex;
+    margin: auto var(--gap);
+}
+
+#menu-mentorship li + li {
+    margin-inline-start: var(--gap);
+}
+
+#menu-mentorship a {
+    font-size: 16px;
+    display: block;
+}
+
+#menu-mentorship li + li {
+    margin-inline-start: var(--gap);
+}
+
+#menu-mentorship a {
+    font-size: 16px;
+}
+
+/* Mentorship CTA - Articles */
+.mentorship-article-cta {
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.mentorship-article-cta p {
+    margin: 0 0 0.8rem 0;
+    font-size: 0.95rem;
+    color: var(--secondary);
+}
+
+.mentorship-article-cta button {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mentorship-article-cta button:hover {
+    background: var(--primary);
+    color: var(--theme);
+}
+

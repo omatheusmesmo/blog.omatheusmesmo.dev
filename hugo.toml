@@ -51,7 +51,7 @@ defaultContentLanguage = 'pt'
       description = "Um blog dedicado a compartilhar conhecimentos e experiências em desenvolvimento de software, com foco em Java, seu ecossistema, Angular e Cloud."
       [languages.pt.params.homeInfoParams]
         Title = "Bem-vindo ao meu blog! 👋"
-        Content = "I help professional Java developers master the 'Quarkus Way', empowering them to build high-performing apps and become highly valued engineers. Soli Deo Gloria!"
+        Content = "Ajudo desenvolvedores Java profissionais a dominar o 'Quarkus Way', capacitando-os a construir aplicações de alto desempenho e se tornar engenheiros altamente valorizados. Soli Deo Gloria!"
     [languages.pt.menu]
       [[languages.pt.menu.main]]
         identifier = "about"

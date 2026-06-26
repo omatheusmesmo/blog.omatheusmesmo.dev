@@ -1,0 +1,282 @@
+#!/usr/bin/env -S java --source 25
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class SendNewsletter {
+
+    private static final String BLOG_URL = "https://blog.omatheusmesmo.dev/en/posts";
+    private static final String MAILERLITE_API = "https://connect.mailerlite.com/api";
+    private static final String GROUP_ID = "190886334920918500";
+
+    public static void main(String[] args) throws Exception {
+        String apiKey = System.getenv("MAILERLITE_API_KEY");
+        String testEmail = System.getenv("TEST_EMAIL");
+
+        if (apiKey == null || apiKey.isBlank()) {
+            System.err.println("MAILERLITE_API_KEY not set");
+            System.exit(1);
+        }
+
+        String postDir = detectNewPost();
+        if (postDir == null) {
+            System.out.println("No new post detected");
+            return;
+        }
+
+        System.out.println("New post detected: " + postDir);
+
+        Path frontmatter = Path.of("content/posts/" + postDir + "/index.en.md");
+        if (!Files.exists(frontmatter)) {
+            System.err.println("No index.en.md found for " + postDir);
+            System.exit(1);
+        }
+
+        String content = Files.readString(frontmatter);
+        String title = extractField(content, "title");
+        String description = extractField(content, "description");
+        String slug = extractField(content, "slug");
+
+        if (title == null || description == null || slug == null) {
+            System.err.println("Missing required frontmatter fields");
+            System.exit(1);
+        }
+
+        String articleUrl = BLOG_URL + "/" + slug + "/";
+        String html = buildEmailHtml(title, description, articleUrl);
+
+        if (testEmail != null && !testEmail.isBlank()) {
+            createDraft(apiKey, testEmail, title, html);
+        } else {
+            sendToGroup(apiKey, title, html);
+        }
+    }
+
+    private static String detectNewPost() throws Exception {
+        String envDir = System.getenv("ARTICLE_DIR");
+        if (envDir != null && !envDir.isBlank()) {
+            return envDir.trim();
+        }
+
+        var pb = new ProcessBuilder("git", "diff", "HEAD~1", "--name-only", "--", "content/posts/");
+        pb.redirectErrorStream(true);
+        var proc = pb.start();
+        String output = new String(proc.getInputStream().readAllBytes()).trim();
+        proc.waitFor();
+
+        if (!output.isEmpty()) {
+            String firstLine = output.lines().findFirst().orElse(null);
+            if (firstLine != null) {
+                String[] parts = firstLine.split("/");
+                if (parts.length >= 3) {
+                    return parts[1];
+                }
+            }
+        }
+
+        return latestPostDir();
+    }
+
+    private static String latestPostDir() throws Exception {
+        Path posts = Path.of("content/posts");
+        if (!Files.isDirectory(posts)) return null;
+        try (var stream = Files.list(posts)) {
+            return stream
+                .filter(Files::isDirectory)
+                .map(p -> p.getFileName().toString())
+                .sorted(java.util.Comparator.reverseOrder())
+                .findFirst()
+                .orElse(null);
+        }
+    }
+
+    private static String extractField(String content, String field) {
+        Pattern pattern = Pattern.compile("^" + field + ":\\s*\"(.+?)\"", Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        pattern = Pattern.compile("^" + field + ":\\s*(.+)$", Pattern.MULTILINE);
+        matcher = pattern.matcher(content);
+        if (matcher.find()) {
+            return matcher.group(1).trim();
+        }
+        return null;
+    }
+
+    private static String buildEmailHtml(String title, String description, String url) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>");
+        sb.append("<body style=\"margin:0;padding:0;background-color:#FAF8F5;font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;\">");
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color:#FAF8F5;\">");
+        sb.append("<tr><td align=\"center\" style=\"padding:40px 20px;\">");
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:580px;\">");
+        sb.append("<tr><td>");
+
+        // Email card
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(44,36,23,0.04),0 8px 24px rgba(44,36,23,0.07);\">");
+
+        // Header
+        sb.append("<tr><td style=\"background:linear-gradient(135deg,#B07219 0%,#8C5A14 100%);padding:40px 32px 32px;text-align:left;\">");
+        sb.append("<p style=\"margin:0 0 16px;display:inline-block;background:rgba(255,255,255,0.18);color:#FFFFFF;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;padding:5px 12px;border-radius:20px;\">New Article</p>");
+        sb.append("<h1 style=\"margin:0 0 8px;color:#FFFFFF;font-size:28px;font-weight:800;line-height:1.2;letter-spacing:-0.5px;\">").append(escapeHtml(title)).append("</h1>");
+        sb.append("<p style=\"margin:0;color:rgba(255,255,255,0.75);font-size:14px;line-height:1.5;max-width:380px;\">").append(truncate(escapeHtml(description), 120)).append("</p>");
+        sb.append("</td></tr>");
+
+        // Body
+        sb.append("<tr><td style=\"padding:36px 32px;\">");
+        sb.append("<p style=\"margin:0 0 20px;color:#2C2417;font-size:15px;line-height:1.6;\">Hey <strong>{$name}</strong>,</p>");
+        sb.append("<p style=\"margin:0 0 28px;color:#6B5D4F;font-size:14px;line-height:1.8;\">").append(escapeHtml(description)).append("</p>");
+
+        // CTA
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td align=\"center\">");
+        sb.append("<a href=\"").append(url).append("\" style=\"display:inline-block;background:linear-gradient(135deg,#B07219,#8C5A14);color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:10px;font-weight:700;font-size:15px;box-shadow:0 4px 14px rgba(176,114,25,0.25);\">Read the Article &rarr;</a>");
+        sb.append("</td></tr></table>");
+        sb.append("</td></tr>");
+
+        // Divider
+        sb.append("<tr><td style=\"padding:0 32px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"border-top:1px solid #EDE8E1;\"></td></tr></table></td></tr>");
+
+        // Footer
+        sb.append("<tr><td style=\"background:#FAF8F5;padding:28px 32px;border-top:1px solid #EDE8E1;\">");
+        sb.append("<p style=\"margin:0 0 4px;color:#9C8E7E;font-size:12px;\">Best regards,</p>");
+        sb.append("<p style=\"margin:0 0 20px;color:#2C2417;font-size:15px;font-weight:700;\">Matheus Oliveira</p>");
+        sb.append("<a href=\"https://blog.omatheusmesmo.dev\" style=\"color:#B07219;text-decoration:none;font-size:12px;font-weight:500;\">Blog</a> ");
+        sb.append("<span style=\"color:#D6CFC5;margin:0 8px;\">·</span> ");
+        sb.append("<a href=\"https://github.com/omatheusmesmo\" style=\"color:#B07219;text-decoration:none;font-size:12px;font-weight:500;\">GitHub</a> ");
+        sb.append("<span style=\"color:#D6CFC5;margin:0 8px;\">·</span> ");
+        sb.append("<a href=\"https://linkedin.com/in/omatheusmesmo\" style=\"color:#B07219;text-decoration:none;font-size:12px;font-weight:500;\">LinkedIn</a>");
+        sb.append("<p style=\"margin:20px 0 0;color:#9C8E7E;font-size:11px;\">");
+        sb.append("<a href=\"{$unsubscribe}\" style=\"color:#B07219;text-decoration:underline;\">Unsubscribe</a>");
+        sb.append(" · <a href=\"{$url}\" style=\"color:#B07219;text-decoration:underline;\">View in browser</a>");
+        sb.append("</p></td></tr>");
+
+        sb.append("</table></td></tr></table></td></tr></table></body></html>");
+        return sb.toString();
+    }
+
+    private static String escapeHtml(String text) {
+        if (text == null) return "";
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+    }
+
+    private static String truncate(String text, int maxLen) {
+        if (text == null || text.length() <= maxLen) return text;
+        return text.substring(0, maxLen).replaceAll("\\s+\\S*$", "") + "...";
+    }
+
+    private static void sendToGroup(String apiKey, String subject, String html) throws Exception {
+        String campaignId = createCampaign(apiKey, subject, html, GROUP_ID);
+        scheduleCampaign(apiKey, campaignId);
+    }
+
+    private static void createDraft(String apiKey, String testEmail, String subject, String html) throws Exception {
+        String testGroupId = createTestGroup(apiKey, testEmail);
+        String campaignId = createCampaign(apiKey, subject, html, testGroupId);
+        scheduleCampaign(apiKey, campaignId);
+        System.out.println("Test email sent to " + testEmail);
+    }
+
+    private static String createTestGroup(String apiKey, String email) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String body = "{\"name\":\"Newsletter Test\"}";
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(MAILERLITE_API + "/groups"))
+            .header("Authorization", "Bearer " + apiKey)
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String groupId = extractJsonField(response.body(), "id");
+        if (groupId == null) {
+            System.err.println("Could not create test group: " + response.body());
+            System.exit(1);
+        }
+        System.out.println("Test group created: " + groupId);
+
+        String subBody = "{\"email\":\"" + escapeJson(email) + "\",\"groups\":[\"" + groupId + "\"]}";
+        HttpRequest subRequest = HttpRequest.newBuilder()
+            .uri(URI.create(MAILERLITE_API + "/subscribers"))
+            .header("Authorization", "Bearer " + apiKey)
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(subBody))
+            .build();
+
+        HttpResponse<String> subResponse = client.send(subRequest, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Subscriber added: " + subResponse.statusCode());
+
+        return groupId;
+    }
+
+    private static String createCampaign(String apiKey, String subject, String html, String groupId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String body = "{\"name\":\"Newsletter: " + escapeJson(subject) + "\","
+                + "\"type\":\"regular\","
+                + "\"emails\":[{\"subject\":\"" + escapeJson(subject)
+                + "\",\"from_name\":\"Matheus Oliveira\",\"from\":\"hi@omatheusmesmo.dev\""
+                + ",\"content\":\"" + escapeJson(html) + "\"}],"
+                + "\"groups\":[\"" + groupId + "\"]}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(MAILERLITE_API + "/campaigns"))
+            .header("Authorization", "Bearer " + apiKey)
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Campaign created: " + response.statusCode());
+
+        if (response.statusCode() >= 400) {
+            System.err.println(response.body());
+            System.exit(1);
+        }
+
+        String id = extractJsonField(response.body(), "id");
+        if (id == null) {
+            System.err.println("Could not extract campaign ID from response");
+            System.err.println(response.body());
+            System.exit(1);
+        }
+        return id;
+    }
+
+    private static void scheduleCampaign(String apiKey, String campaignId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String body = "{\"delivery\":\"instant\"}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(MAILERLITE_API + "/campaigns/" + campaignId + "/schedule"))
+            .header("Authorization", "Bearer " + apiKey)
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Campaign scheduled: " + response.statusCode());
+        System.out.println(response.body());
+    }
+
+    private static String extractJsonField(String json, String field) {
+        Pattern p = Pattern.compile("\"" + field + "\"\\s*:\\s*\"?(\\d+)\"?");
+        Matcher m = p.matcher(json);
+        return m.find() ? m.group(1) : null;
+    }
+
+    private static String escapeJson(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+    }
+}

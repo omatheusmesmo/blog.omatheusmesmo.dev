@@ -1,0 +1,197 @@
+#!/usr/bin/env -S java --source 25
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+public class UpdateReadme {
+
+    private static final String POSTS_DIR = "content/posts";
+    private static final String README_PATH = System.getenv().getOrDefault("README_PATH", "profile-repo/README.md");
+    private static final String BASE_URL = "https://blog.omatheusmesmo.dev/en/posts";
+    private static final String YOUTUBE_RSS = "https://www.youtube.com/feeds/videos.xml?channel_id=UC-agksQ5-WT4l-fnbczYxeA";
+    private static final int FEATURED_COUNT = 5;
+
+    private static final String BLOG_START = "<!-- BLOG-POST-LIST:START -->";
+    private static final String BLOG_END = "<!-- BLOG-POST-LIST:END -->";
+    private static final String YT_START = "<!-- YOUTUBE-VIDEO-LIST:START -->";
+    private static final String YT_END = "<!-- YOUTUBE-VIDEO-LIST:END -->";
+
+    public static void main(String[] args) throws Exception {
+        boolean updateBlog = args.length == 0 || List.of(args).contains("--blog");
+        boolean updateYoutube = args.length == 0 || List.of(args).contains("--youtube");
+
+        if (!Files.exists(Path.of(README_PATH))) {
+            System.err.println("README not found at " + README_PATH);
+            System.exit(1);
+        }
+
+        String readme = Files.readString(Path.of(README_PATH));
+
+        if (updateBlog) {
+            readme = updateBlogSection(readme);
+        }
+        if (updateYoutube) {
+            readme = updateYoutubeSection(readme);
+        }
+
+        Files.writeString(Path.of(README_PATH), readme);
+        System.out.println("README updated successfully");
+    }
+
+    private static String updateBlogSection(String readme) throws Exception {
+        List<Post> posts = getLatestPosts();
+        if (posts.isEmpty()) {
+            System.out.println("No posts found, skipping blog section");
+            return readme;
+        }
+
+        List<Post> featured = posts.subList(0, Math.min(FEATURED_COUNT, posts.size()));
+        List<Post> archived = posts.subList(Math.min(FEATURED_COUNT, posts.size()), posts.size());
+
+        StringBuilder sb = new StringBuilder();
+        for (Post p : featured) {
+            sb.append("- **[").append(p.title).append("](").append(BASE_URL).append("/").append(p.slug).append("/)**  \n");
+            sb.append("  ").append(p.summary).append("\n\n");
+        }
+
+        if (!archived.isEmpty()) {
+            sb.append("<details>\n<summary>📂 <b>View all posts (").append(archived.size()).append(" more)</b></summary>\n\n");
+            for (Post p : archived) {
+                sb.append("- [").append(p.title).append("](").append(BASE_URL).append("/").append(p.slug).append("/)\n");
+            }
+            sb.append("</details>");
+        }
+
+        return replaceSection(readme, BLOG_START, BLOG_END, sb.toString().trim());
+    }
+
+    private static String updateYoutubeSection(String readme) throws Exception {
+        List<Video> videos = getLatestVideos();
+        if (videos.isEmpty()) {
+            System.out.println("No videos found, skipping YouTube section");
+            return readme;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (Video v : videos) {
+            sb.append("- [").append(v.title).append("](").append(v.url).append(")\n");
+        }
+
+        return replaceSection(readme, YT_START, YT_END, sb.toString().trim());
+    }
+
+    private static String replaceSection(String content, String startMarker, String endMarker, String newContent) {
+        Pattern pattern = Pattern.compile(Pattern.quote(startMarker) + "[\\s\\S]*?" + Pattern.quote(endMarker));
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) {
+            return matcher.replaceFirst(startMarker + "\n\n" + newContent + "\n\n" + endMarker);
+        }
+        System.err.println("Markers not found: " + startMarker + " / " + endMarker);
+        return content;
+    }
+
+    private static List<Post> getLatestPosts() throws Exception {
+        Path postsDir = Path.of(POSTS_DIR);
+        if (!Files.isDirectory(postsDir)) return List.of();
+
+        List<Post> posts = new ArrayList<>();
+        try (var stream = Files.list(postsDir)) {
+            stream.filter(Files::isDirectory).forEach(dir -> {
+                Path file = dir.resolve("index.en.md");
+                if (!Files.exists(file)) return;
+                try {
+                    String content = Files.readString(file);
+                    String title = extractField(content, "title");
+                    String dateStr = extractField(content, "date");
+                    String slug = extractField(content, "slug");
+                    String summary = extractField(content, "summary");
+                    String draft = extractField(content, "draft");
+
+                    if ("true".equals(draft) || title == null || dateStr == null) return;
+
+                    posts.add(new Post(
+                        title,
+                        LocalDate.parse(dateStr.substring(0, 10)),
+                        slug != null ? slug : dir.getFileName().toString(),
+                        summary != null ? summary : ""
+                    ));
+                } catch (Exception e) {
+                    System.err.println("Error parsing " + file + ": " + e.getMessage());
+                }
+            });
+        }
+
+        posts.sort(Comparator.comparing((Post p) -> p.date).reversed());
+        return posts;
+    }
+
+    private static List<Video> getLatestVideos() throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(YOUTUBE_RSS))
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String xml = response.body();
+
+        List<Video> videos = new ArrayList<>();
+        Pattern entryPattern = Pattern.compile("<entry>(.*?)</entry>", Pattern.DOTALL);
+        Pattern titlePattern = Pattern.compile("<title>(.*?)</title>");
+        Pattern videoIdPattern = Pattern.compile("<yt:videoId>(.*?)</yt:videoId>");
+        Pattern publishedPattern = Pattern.compile("<published>(.*?)</published>");
+
+        Matcher entryMatcher = entryPattern.matcher(xml);
+        while (entryMatcher.find()) {
+            String entry = entryMatcher.group(1);
+            Matcher titleMatcher = titlePattern.matcher(entry);
+            Matcher videoIdMatcher = videoIdPattern.matcher(entry);
+            Matcher publishedMatcher = publishedPattern.matcher(entry);
+
+            if (titleMatcher.find() && videoIdMatcher.find() && publishedMatcher.find()) {
+                String title = titleMatcher.group(1)
+                    .replace("&amp;", "&")
+                    .replace("&#39;", "'")
+                    .replace("&quot;", "\"");
+                String videoId = videoIdMatcher.group(1);
+                String published = publishedMatcher.group(1).substring(0, 10);
+
+                videos.add(new Video(
+                    title,
+                    "https://www.youtube.com/watch?v=" + videoId,
+                    LocalDate.parse(published)
+                ));
+            }
+        }
+
+        videos.sort(Comparator.comparing((Video v) -> v.published).reversed());
+        return videos.stream().limit(5).collect(Collectors.toList());
+    }
+
+    private static String extractField(String content, String field) {
+        Pattern pattern = Pattern.compile("^" + field + ":\\s*\"(.+?)\"", Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) return matcher.group(1);
+
+        pattern = Pattern.compile("^" + field + ":\\s*(.+)$", Pattern.MULTILINE);
+        matcher = pattern.matcher(content);
+        if (matcher.find()) return matcher.group(1).trim();
+        return null;
+    }
+
+    record Post(String title, LocalDate date, String slug, String summary) {}
+    record Video(String title, String url, LocalDate published) {}
+}

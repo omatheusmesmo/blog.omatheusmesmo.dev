@@ -1,0 +1,58 @@
+name: YouTube Newsletter + README Update
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # daily at noon
+  workflow_dispatch:
+    inputs:
+      test_email:
+        description: 'Test email (sends only to this address, skips the group)'
+        required: false
+        type: string
+      video_id:
+        description: 'YouTube video ID (e.g. Di52m2yExrE). Leave empty to auto-detect latest from RSS.'
+        required: false
+        type: string
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout blog
+        uses: actions/checkout@v4
+
+      - name: Checkout profile
+        uses: actions/checkout@v4
+        with:
+          repository: omatheusmesmo/omatheusmesmo
+          path: profile-repo
+          token: ${{ secrets.PROFILE_README_TOKEN }}
+
+      - name: Setup Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - parallel:
+          - name: Send YouTube newsletter
+            run: chmod +x scripts/send-newsletter && scripts/send-newsletter --youtube
+            env:
+              MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+              TEST_EMAIL: ${{ inputs.test_email }}
+              VIDEO_ID: ${{ inputs.video_id }}
+
+          - name: Update README
+            run: chmod +x scripts/update-readme && scripts/update-readme --youtube
+            env:
+              README_PATH: profile-repo/README.md
+
+      - name: Push README changes
+        if: success()
+        run: |
+          cd profile-repo
+          git config user.name "Matheus Oliveira"
+          git config user.email "matheus.6148@gmail.com"
+          git add README.md
+          git diff --cached --quiet || git commit -m "docs: update YouTube videos list"
+          git push

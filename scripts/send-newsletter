@@ -15,16 +15,26 @@ public class SendNewsletter {
     private static final String BLOG_URL = "https://blog.omatheusmesmo.dev/en/posts";
     private static final String MAILERLITE_API = "https://connect.mailerlite.com/api";
     private static final String GROUP_ID = "190886334920918500";
+    private static final String YOUTUBE_RSS = "https://www.youtube.com/feeds/videos.xml?channel_id=UC-agksQ5-WT4l-fnbczYxeA";
 
     public static void main(String[] args) throws Exception {
         String apiKey = System.getenv("MAILERLITE_API_KEY");
         String testEmail = System.getenv("TEST_EMAIL");
+        boolean youtubeMode = java.util.List.of(args).contains("--youtube");
 
         if (apiKey == null || apiKey.isBlank()) {
             System.err.println("MAILERLITE_API_KEY not set");
             System.exit(1);
         }
 
+        if (youtubeMode) {
+            handleYoutube(apiKey, testEmail);
+        } else {
+            handleBlog(apiKey, testEmail);
+        }
+    }
+
+    private static void handleBlog(String apiKey, String testEmail) throws Exception {
         String postDir = detectNewPost();
         if (postDir == null) {
             System.out.println("No new post detected");
@@ -50,13 +60,52 @@ public class SendNewsletter {
         }
 
         String articleUrl = BLOG_URL + "/" + slug + "/";
-        String html = buildEmailHtml(title, description, articleUrl);
+        String html = buildBlogEmailHtml(title, description, articleUrl);
 
         if (testEmail != null && !testEmail.isBlank()) {
             createDraft(apiKey, testEmail, title, html);
         } else {
             sendToGroup(apiKey, title, html);
         }
+    }
+
+    private static void handleYoutube(String apiKey, String testEmail) throws Exception {
+        String videoId = detectNewVideo();
+        if (videoId == null) {
+            System.out.println("No new video detected");
+            return;
+        }
+
+        String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+
+        if (isVideoAlreadySent(videoUrl)) {
+            System.out.println("Video already sent: " + videoId);
+            return;
+        }
+
+        System.out.println("New video detected: " + videoId);
+
+        String[] videoInfo = fetchVideoInfo(videoId);
+        String title = videoInfo[0];
+        String description = videoInfo[1];
+        String thumbnailUrl = "https://i1.ytimg.com/vi/" + videoId + "/hqdefault.jpg";
+
+        String html = buildYoutubeEmailHtml(title, description, videoUrl, thumbnailUrl);
+
+        if (testEmail != null && !testEmail.isBlank()) {
+            createDraft(apiKey, testEmail, "New Video: " + title, html);
+        } else {
+            sendToGroup(apiKey, "New Video: " + title, html);
+        }
+    }
+
+    private static boolean isVideoAlreadySent(String videoUrl) throws Exception {
+        String readmePath = System.getenv().getOrDefault("README_PATH", "profile-repo/README.md");
+        Path path = Path.of(readmePath);
+        if (!Files.exists(path)) return false;
+
+        String content = Files.readString(path);
+        return content.contains(videoUrl);
     }
 
     private static String detectNewPost() throws Exception {
@@ -97,6 +146,78 @@ public class SendNewsletter {
         }
     }
 
+    private static String detectNewVideo() throws Exception {
+        String envVideoId = System.getenv("VIDEO_ID");
+        if (envVideoId != null && !envVideoId.isBlank()) {
+            return envVideoId.trim();
+        }
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(YOUTUBE_RSS))
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String xml = response.body();
+
+        Pattern videoIdPattern = Pattern.compile("<yt:videoId>(.*?)</yt:videoId>");
+        Matcher matcher = videoIdPattern.matcher(xml);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private static String[] fetchVideoInfo(String videoId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(YOUTUBE_RSS))
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String xml = response.body();
+
+        String entryPattern = "<yt:videoId>" + Pattern.quote(videoId) + "</yt:videoId>";
+        int idx = xml.indexOf("<yt:videoId>" + videoId + "</yt:videoId>");
+        if (idx < 0) return new String[]{"Unknown", ""};
+
+        int entryStart = xml.lastIndexOf("<entry>", idx);
+        int entryEnd = xml.indexOf("</entry>", idx);
+        if (entryStart < 0 || entryEnd < 0) return new String[]{"Unknown", ""};
+
+        String entry = xml.substring(entryStart, entryEnd);
+
+        Pattern titlePattern = Pattern.compile("<title>(.*?)</title>");
+        Pattern descPattern = Pattern.compile("<media:description>(.*?)</media:description>", Pattern.DOTALL);
+
+        String title = "Unknown";
+        String description = "";
+
+        Matcher titleMatcher = titlePattern.matcher(entry);
+        if (titleMatcher.find()) {
+            title = titleMatcher.group(1)
+                .replace("&amp;", "&")
+                .replace("&#39;", "'")
+                .replace("&quot;", "\"");
+        }
+
+        Matcher descMatcher = descPattern.matcher(entry);
+        if (descMatcher.find()) {
+            description = descMatcher.group(1)
+                .replace("&amp;", "&")
+                .replace("&#39;", "'")
+                .replace("&quot;", "\"")
+                .trim();
+            if (description.length() > 200) {
+                description = description.substring(0, 200).replaceAll("\\s+\\S*$", "") + "...";
+            }
+        }
+
+        return new String[]{title, description};
+    }
+
     private static String extractField(String content, String field) {
         Pattern pattern = Pattern.compile("^" + field + ":\\s*\"(.+?)\"", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
@@ -112,7 +233,7 @@ public class SendNewsletter {
         return null;
     }
 
-    private static String buildEmailHtml(String title, String description, String url) {
+    private static String buildBlogEmailHtml(String title, String description, String url) {
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>");
         sb.append("<body style=\"margin:0;padding:0;background-color:#FAF8F5;font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;\">");
@@ -121,31 +242,79 @@ public class SendNewsletter {
         sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:580px;\">");
         sb.append("<tr><td>");
 
-        // Email card
         sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(44,36,23,0.04),0 8px 24px rgba(44,36,23,0.07);\">");
 
-        // Header
         sb.append("<tr><td style=\"background:linear-gradient(135deg,#B07219 0%,#8C5A14 100%);padding:40px 32px 32px;text-align:left;\">");
         sb.append("<p style=\"margin:0 0 16px;display:inline-block;background:rgba(255,255,255,0.18);color:#FFFFFF;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;padding:5px 12px;border-radius:20px;\">New Article</p>");
         sb.append("<h1 style=\"margin:0 0 8px;color:#FFFFFF;font-size:28px;font-weight:800;line-height:1.2;letter-spacing:-0.5px;\">").append(escapeHtml(title)).append("</h1>");
         sb.append("<p style=\"margin:0;color:rgba(255,255,255,0.75);font-size:14px;line-height:1.5;max-width:380px;\">").append(truncate(escapeHtml(description), 120)).append("</p>");
         sb.append("</td></tr>");
 
-        // Body
         sb.append("<tr><td style=\"padding:36px 32px;\">");
         sb.append("<p style=\"margin:0 0 20px;color:#2C2417;font-size:15px;line-height:1.6;\">Hey <strong>{$name}</strong>,</p>");
         sb.append("<p style=\"margin:0 0 28px;color:#6B5D4F;font-size:14px;line-height:1.8;\">").append(escapeHtml(description)).append("</p>");
 
-        // CTA
         sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td align=\"center\">");
         sb.append("<a href=\"").append(url).append("\" style=\"display:inline-block;background:linear-gradient(135deg,#B07219,#8C5A14);color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:10px;font-weight:700;font-size:15px;box-shadow:0 4px 14px rgba(176,114,25,0.25);\">Read the Article &rarr;</a>");
         sb.append("</td></tr></table>");
         sb.append("</td></tr>");
 
-        // Divider
         sb.append("<tr><td style=\"padding:0 32px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"border-top:1px solid #EDE8E1;\"></td></tr></table></td></tr>");
 
-        // Footer
+        sb.append("<tr><td style=\"background:#FAF8F5;padding:28px 32px;border-top:1px solid #EDE8E1;\">");
+        sb.append("<p style=\"margin:0 0 4px;color:#9C8E7E;font-size:12px;\">Best regards,</p>");
+        sb.append("<p style=\"margin:0 0 20px;color:#2C2417;font-size:15px;font-weight:700;\">Matheus Oliveira</p>");
+        sb.append("<a href=\"https://blog.omatheusmesmo.dev\" style=\"color:#B07219;text-decoration:none;font-size:12px;font-weight:500;\">Blog</a> ");
+        sb.append("<span style=\"color:#D6CFC5;margin:0 8px;\">·</span> ");
+        sb.append("<a href=\"https://github.com/omatheusmesmo\" style=\"color:#B07219;text-decoration:none;font-size:12px;font-weight:500;\">GitHub</a> ");
+        sb.append("<span style=\"color:#D6CFC5;margin:0 8px;\">·</span> ");
+        sb.append("<a href=\"https://linkedin.com/in/omatheusmesmo\" style=\"color:#B07219;text-decoration:none;font-size:12px;font-weight:500;\">LinkedIn</a>");
+        sb.append("<p style=\"margin:20px 0 0;color:#9C8E7E;font-size:11px;\">");
+        sb.append("<a href=\"{$unsubscribe}\" style=\"color:#B07219;text-decoration:underline;\">Unsubscribe</a>");
+        sb.append(" · <a href=\"{$url}\" style=\"color:#B07219;text-decoration:underline;\">View in browser</a>");
+        sb.append("</p></td></tr>");
+
+        sb.append("</table></td></tr></table></td></tr></table></body></html>");
+        return sb.toString();
+    }
+
+    private static String buildYoutubeEmailHtml(String title, String description, String videoUrl, String thumbnailUrl) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>");
+        sb.append("<body style=\"margin:0;padding:0;background-color:#FAF8F5;font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;\">");
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color:#FAF8F5;\">");
+        sb.append("<tr><td align=\"center\" style=\"padding:40px 20px;\">");
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:580px;\">");
+        sb.append("<tr><td>");
+
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(44,36,23,0.04),0 8px 24px rgba(44,36,23,0.07);\">");
+
+        sb.append("<tr><td style=\"background:linear-gradient(135deg,#B07219 0%,#8C5A14 100%);padding:40px 32px 32px;text-align:left;\">");
+        sb.append("<p style=\"margin:0 0 16px;display:inline-block;background:rgba(255,255,255,0.18);color:#FFFFFF;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;padding:5px 12px;border-radius:20px;\">New Video</p>");
+        sb.append("<h1 style=\"margin:0 0 8px;color:#FFFFFF;font-size:28px;font-weight:800;line-height:1.2;letter-spacing:-0.5px;\">").append(escapeHtml(title)).append("</h1>");
+        sb.append("</td></tr>");
+
+        sb.append("<tr><td style=\"padding:36px 32px;\">");
+        sb.append("<p style=\"margin:0 0 20px;color:#2C2417;font-size:15px;line-height:1.6;\">Hey <strong>{$name}</strong>,</p>");
+
+        if (!description.isEmpty()) {
+            sb.append("<p style=\"margin:0 0 24px;color:#6B5D4F;font-size:14px;line-height:1.8;\">").append(escapeHtml(description)).append("</p>");
+        }
+
+        // Thumbnail clicável
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td align=\"center\">");
+        sb.append("<a href=\"").append(videoUrl).append("\" style=\"display:block;text-decoration:none;\">");
+        sb.append("<img src=\"").append(thumbnailUrl).append("\" alt=\"").append(escapeHtml(title)).append("\" style=\"width:100%;max-width:516px;border-radius:12px;display:block;\" />");
+        sb.append("</a>");
+        sb.append("</td></tr></table>");
+
+        sb.append("<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"margin-top:28px;\"><tr><td align=\"center\">");
+        sb.append("<a href=\"").append(videoUrl).append("\" style=\"display:inline-block;background:linear-gradient(135deg,#FF0000,#CC0000);color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:10px;font-weight:700;font-size:15px;box-shadow:0 4px 14px rgba(255,0,0,0.25);\">Watch on YouTube &rarr;</a>");
+        sb.append("</td></tr></table>");
+        sb.append("</td></tr>");
+
+        sb.append("<tr><td style=\"padding:0 32px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td style=\"border-top:1px solid #EDE8E1;\"></td></tr></table></td></tr>");
+
         sb.append("<tr><td style=\"background:#FAF8F5;padding:28px 32px;border-top:1px solid #EDE8E1;\">");
         sb.append("<p style=\"margin:0 0 4px;color:#9C8E7E;font-size:12px;\">Best regards,</p>");
         sb.append("<p style=\"margin:0 0 20px;color:#2C2417;font-size:15px;font-weight:700;\">Matheus Oliveira</p>");

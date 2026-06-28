@@ -14,7 +14,7 @@ public class SendNewsletter {
 
     private static final String BLOG_URL = "https://blog.omatheusmesmo.dev/en/posts";
     private static final String MAILERLITE_API = "https://connect.mailerlite.com/api";
-    private static final String GROUP_ID = "190886334920918500";
+    private static final String GROUP_ID = System.getenv().getOrDefault("MAILERLITE_GROUP_ID", "");
     private static final String YOUTUBE_RSS = "https://www.youtube.com/feeds/videos.xml?channel_id=UC-agksQ5-WT4l-fnbczYxeA";
 
     public static void main(String[] args) throws Exception {
@@ -125,7 +125,7 @@ public class SendNewsletter {
             if (firstLine != null) {
                 String[] parts = firstLine.split("/");
                 if (parts.length >= 3) {
-                    return parts[1];
+                    return parts[2];
                 }
             }
         }
@@ -395,7 +395,7 @@ public class SendNewsletter {
                 + "\"emails\":[{\"subject\":\"" + escapeJson(subject)
                 + "\",\"from_name\":\"Matheus Oliveira\",\"from\":\"hi@omatheusmesmo.dev\""
                 + ",\"content\":\"" + escapeJson(html) + "\"}],"
-                + "\"groups\":[\"" + groupId + "\"]}";
+                + "\"groups\":[" + (groupId.isEmpty() ? "" : "\"" + groupId + "\"") + "]}";
 
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(MAILERLITE_API + "/campaigns"))

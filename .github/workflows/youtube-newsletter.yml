@@ -34,18 +34,18 @@ jobs:
           distribution: temurin
           java-version: '25'
 
-      - parallel:
-          - name: Send YouTube newsletter
-            run: chmod +x scripts/send-newsletter && scripts/send-newsletter --youtube
-            env:
-              MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
-              TEST_EMAIL: ${{ inputs.test_email }}
-              VIDEO_ID: ${{ inputs.video_id }}
+      - name: Send YouTube newsletter
+        run: chmod +x scripts/send-newsletter && scripts/send-newsletter --youtube
+        env:
+          MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+          MAILERLITE_GROUP_ID: ${{ secrets.MAILERLITE_GROUP_ID }}
+          TEST_EMAIL: ${{ inputs.test_email }}
+          VIDEO_ID: ${{ inputs.video_id }}
 
-          - name: Update README
-            run: chmod +x scripts/update-readme && scripts/update-readme --youtube
-            env:
-              README_PATH: profile-repo/README.md
+      - name: Update README
+        run: chmod +x scripts/update-readme && scripts/update-readme --youtube
+        env:
+          README_PATH: profile-repo/README.md
 
       - name: Push README changes
         if: success()

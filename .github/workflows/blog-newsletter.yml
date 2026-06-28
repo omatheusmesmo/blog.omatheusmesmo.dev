@@ -37,18 +37,18 @@ jobs:
           distribution: temurin
           java-version: '25'
 
-      - parallel:
-          - name: Send newsletter
-            run: chmod +x scripts/send-newsletter && scripts/send-newsletter
-            env:
-              MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
-              TEST_EMAIL: ${{ inputs.test_email }}
-              ARTICLE_DIR: ${{ inputs.article_dir }}
+      - name: Send newsletter
+        run: chmod +x scripts/send-newsletter && scripts/send-newsletter
+        env:
+          MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+          MAILERLITE_GROUP_ID: ${{ secrets.MAILERLITE_GROUP_ID }}
+          TEST_EMAIL: ${{ inputs.test_email }}
+          ARTICLE_DIR: ${{ inputs.article_dir }}
 
-          - name: Update README
-            run: chmod +x scripts/update-readme && scripts/update-readme --blog
-            env:
-              README_PATH: profile-repo/README.md
+      - name: Update README
+        run: chmod +x scripts/update-readme && scripts/update-readme --blog
+        env:
+          README_PATH: profile-repo/README.md
 
       - name: Push README changes
         if: success()

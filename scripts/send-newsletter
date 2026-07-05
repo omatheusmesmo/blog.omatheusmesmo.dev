@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -121,16 +122,32 @@ public class SendNewsletter {
         proc.waitFor();
 
         if (!output.isEmpty()) {
-            String firstLine = output.lines().findFirst().orElse(null);
-            if (firstLine != null) {
-                String[] parts = firstLine.split("/");
-                if (parts.length >= 3) {
-                    return parts[2];
+            List<String> changedDirs = output.lines()
+                .filter(line -> line.split("/").length >= 3)
+                .map(line -> line.split("/")[2])
+                .distinct()
+                .toList();
+
+            String readmePath = System.getenv().getOrDefault("README_PATH", "profile-repo/README.md");
+            String readmeContent = Files.exists(Path.of(readmePath)) ? Files.readString(readmePath) : "";
+
+            for (String dir : changedDirs) {
+                Path frontmatter = Path.of("content/posts/" + dir + "/index.en.md");
+                if (Files.exists(frontmatter)) {
+                    String content = Files.readString(frontmatter);
+                    String slug = extractField(content, "slug");
+                    if (slug != null && readmeContent.contains(slug)) {
+                        System.out.println("Already sent: " + dir + " (slug: " + slug + ")");
+                        continue;
+                    }
+                    return dir;
                 }
             }
+
+            System.out.println("All changed posts already sent");
         }
 
-        return latestPostDir();
+        return null;
     }
 
     private static String latestPostDir() throws Exception {

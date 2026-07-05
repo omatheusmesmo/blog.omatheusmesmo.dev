@@ -129,7 +129,8 @@ public class SendNewsletter {
                 .toList();
 
             String readmePath = System.getenv().getOrDefault("README_PATH", "profile-repo/README.md");
-            String readmeContent = Files.exists(Path.of(readmePath)) ? Files.readString(readmePath) : "";
+            Path readmeFilePath = Path.of(readmePath);
+            String readmeContent = Files.exists(readmeFilePath) ? Files.readString(readmeFilePath) : "";
 
             for (String dir : changedDirs) {
                 Path frontmatter = Path.of("content/posts/" + dir + "/index.en.md");

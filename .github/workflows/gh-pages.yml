@@ -8,6 +8,15 @@ on:
       - "README.md"
     branches:
       - main
+  # Hugo skips posts whose date is in the future, and it only evaluates that at build
+  # time. Without a rebuild, a post scheduled for tomorrow never appears, because
+  # nothing triggers a build tomorrow.
+  #
+  # 15:10 UTC is 12:10 in BRT (-03:00), just after the noon slot used for scheduled
+  # posts. Note GitHub disables cron workflows after 60 days without repository
+  # activity, so a long quiet period needs one manual run to re-enable it.
+  schedule:
+    - cron: "10 15 * * *"
   workflow_dispatch:
     # manual run
     inputs:

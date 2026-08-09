@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e18"/>
+      <stop offset="50%" style="stop-color:#0f1526"/>
+      <stop offset="100%" style="stop-color:#0a1a22"/>
+    </linearGradient>
+    <linearGradient id="thread" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   style="stop-color:#a78bfa"/>
+      <stop offset="25%"  style="stop-color:#60a5fa"/>
+      <stop offset="50%"  style="stop-color:#34d399"/>
+      <stop offset="75%"  style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#f472b6"/>
+    </linearGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="55"/>
+    </filter>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="140" cy="150" rx="280" ry="200" fill="#5b21b6" opacity="0.26" filter="url(#soft)"/>
+  <ellipse cx="1070" cy="500" rx="280" ry="200" fill="#0d9488" opacity="0.22" filter="url(#soft)"/>
+
+  <!-- five lanes, one per runtime -->
+  <g font-family="Noto Sans, sans-serif" font-size="15">
+    <g>
+      <rect x="86" y="120" width="1030" height="1" fill="#1e293b"/>
+      <text x="86" y="112" fill="#a78bfa" font-weight="600">browser</text>
+      <text x="176" y="112" fill="#475569" font-size="13" font-family="JetBrainsMono Nerd Font, monospace">angular</text>
+    </g>
+    <g>
+      <rect x="86" y="212" width="1030" height="1" fill="#1e293b"/>
+      <text x="86" y="204" fill="#60a5fa" font-weight="600">orders</text>
+      <text x="176" y="204" fill="#475569" font-size="13" font-family="JetBrainsMono Nerd Font, monospace">java</text>
+    </g>
+    <g>
+      <rect x="86" y="304" width="1030" height="1" fill="#1e293b"/>
+      <text x="86" y="296" fill="#34d399" font-weight="600">inventory</text>
+      <text x="176" y="296" fill="#475569" font-size="13" font-family="JetBrainsMono Nerd Font, monospace">.net</text>
+    </g>
+    <g>
+      <rect x="86" y="396" width="1030" height="1" fill="#1e293b"/>
+      <text x="86" y="388" fill="#fbbf24" font-weight="600">payments</text>
+      <text x="176" y="388" fill="#475569" font-size="13" font-family="JetBrainsMono Nerd Font, monospace">go</text>
+    </g>
+    <g>
+      <rect x="86" y="488" width="1030" height="1" fill="#1e293b"/>
+      <text x="86" y="480" fill="#f472b6" font-weight="600">notifications</text>
+      <text x="196" y="480" fill="#475569" font-size="13" font-family="JetBrainsMono Nerd Font, monospace">node</text>
+    </g>
+  </g>
+
+  <!-- the single trace threading through all five -->
+  <path d="M 300 120 L 420 120 Q 452 120 452 152 L 452 180 Q 452 212 484 212
+           L 560 212 Q 592 212 592 244 L 592 272 Q 592 304 624 304
+           L 712 304 Q 744 304 744 336 L 744 364 Q 744 396 776 396
+           L 872 396 Q 904 396 904 428 L 904 456 Q 904 488 936 488 L 1050 488"
+        fill="none" stroke="url(#thread)" stroke-width="3" opacity="0.55" filter="url(#glow)"/>
+  <path d="M 300 120 L 420 120 Q 452 120 452 152 L 452 180 Q 452 212 484 212
+           L 560 212 Q 592 212 592 244 L 592 272 Q 592 304 624 304
+           L 712 304 Q 744 304 744 336 L 744 364 Q 744 396 776 396
+           L 872 396 Q 904 396 904 428 L 904 456 Q 904 488 936 488 L 1050 488"
+        fill="none" stroke="url(#thread)" stroke-width="2.5"/>
+
+  <!-- spans on each lane -->
+  <g>
+    <rect x="300" y="110" width="120" height="20" rx="4" fill="#a78bfa" opacity="0.9"/>
+    <rect x="484" y="202" width="76"  height="20" rx="4" fill="#60a5fa" opacity="0.9"/>
+    <rect x="624" y="294" width="88"  height="20" rx="4" fill="#34d399" opacity="0.9"/>
+    <rect x="776" y="386" width="96"  height="20" rx="4" fill="#fbbf24" opacity="0.9"/>
+    <rect x="936" y="478" width="114" height="20" rx="4" fill="#f472b6" opacity="0.9"/>
+  </g>
+
+  <!-- transport labels on the hops -->
+  <g font-family="JetBrainsMono Nerd Font, monospace" font-size="12" fill="#94a3b8">
+    <text x="462" y="172">http</text>
+    <text x="602" y="264">grpc</text>
+    <text x="754" y="356">http</text>
+    <text x="914" y="448">kafka</text>
+  </g>
+
+  <!-- the traceparent, same on every hop -->
+  <g transform="translate(86,538)">
+    <rect x="0" y="0" width="672" height="44" rx="8" fill="#0a0e18" opacity="0.8" stroke="#334155"/>
+    <text x="16" y="28" font-family="JetBrainsMono Nerd Font, monospace" font-size="15" fill="#64748b">traceparent: </text>
+    <text x="132" y="28" font-family="JetBrainsMono Nerd Font, monospace" font-size="15" fill="#7dd3fc">00-4bf92f3577b34da6a3ce929d0e0e4736-...-01</text>
+  </g>
+
+  <text x="86" y="606" font-family="Noto Sans, sans-serif" font-size="17" fill="#64748b">Four languages. Three transports. One id.</text>
+
+  <text x="1116" y="606" text-anchor="end" font-family="JetBrainsMono Nerd Font, monospace" font-size="14" fill="#475569">part 2 / distributed + production</text>
+</svg>

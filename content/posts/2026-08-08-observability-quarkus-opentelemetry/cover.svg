@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0b0b14"/>
+      <stop offset="55%" style="stop-color:#12121f"/>
+      <stop offset="100%" style="stop-color:#1a1030"/>
+    </linearGradient>
+    <linearGradient id="rootBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#818cf8"/>
+      <stop offset="100%" style="stop-color:#c084fc"/>
+    </linearGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="52"/>
+    </filter>
+    <filter id="lineGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="230" cy="120" rx="300" ry="200" fill="#4c1d95" opacity="0.30" filter="url(#soft)"/>
+  <ellipse cx="1010" cy="560" rx="280" ry="190" fill="#1e3a8a" opacity="0.26" filter="url(#soft)"/>
+
+  <!-- time ruler -->
+  <g opacity="0.16" stroke="#94a3b8" stroke-width="1">
+    <line x1="120" y1="96" x2="1120" y2="96"/>
+    <line x1="120" y1="96" x2="120" y2="88"/>
+    <line x1="370" y1="96" x2="370" y2="88"/>
+    <line x1="620" y1="96" x2="620" y2="88"/>
+    <line x1="870" y1="96" x2="870" y2="88"/>
+    <line x1="1120" y1="96" x2="1120" y2="88"/>
+  </g>
+  <g font-family="JetBrainsMono Nerd Font, monospace" font-size="13" fill="#64748b" opacity="0.75">
+    <text x="120" y="80">0ms</text>
+    <text x="1077" y="80">61ms</text>
+  </g>
+
+  <!-- root span -->
+  <rect x="120" y="112" width="1000" height="26" rx="5" fill="url(#rootBar)" opacity="0.95"/>
+  <text x="136" y="130" font-family="JetBrainsMono Nerd Font, monospace" font-size="14" fill="#0b0b14" font-weight="bold">GET /orders</text>
+
+  <!-- the staircase: repeated identical queries -->
+  <g font-family="JetBrainsMono Nerd Font, monospace" font-size="12">
+    <g transform="translate(0,152)">
+      <rect x="152" y="0"   width="58" height="15" rx="3" fill="#38bdf8" opacity="0.92"/>
+      <text x="222" y="12" fill="#7dd3fc" opacity="0.85">SELECT orders</text>
+    </g>
+    <g transform="translate(0,175)">
+      <rect x="196" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.85"/>
+      <text x="238" y="12" fill="#5eead4" opacity="0.6">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,196)">
+      <rect x="228" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.82"/>
+      <text x="270" y="12" fill="#5eead4" opacity="0.55">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,217)">
+      <rect x="260" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.79"/>
+      <text x="302" y="12" fill="#5eead4" opacity="0.5">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,238)">
+      <rect x="292" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.76"/>
+      <text x="334" y="12" fill="#5eead4" opacity="0.46">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,259)">
+      <rect x="324" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.73"/>
+      <text x="366" y="12" fill="#5eead4" opacity="0.42">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,280)">
+      <rect x="356" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.70"/>
+      <text x="398" y="12" fill="#5eead4" opacity="0.38">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,301)">
+      <rect x="388" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.66"/>
+      <text x="430" y="12" fill="#5eead4" opacity="0.34">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,322)">
+      <rect x="420" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.62"/>
+      <text x="462" y="12" fill="#5eead4" opacity="0.30">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,343)">
+      <rect x="452" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.56"/>
+      <text x="494" y="12" fill="#5eead4" opacity="0.26">SELECT order_items</text>
+    </g>
+    <g transform="translate(0,364)">
+      <rect x="484" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.50"/>
+    </g>
+    <g transform="translate(0,385)">
+      <rect x="516" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.42"/>
+    </g>
+    <g transform="translate(0,406)">
+      <rect x="548" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.34"/>
+    </g>
+    <g transform="translate(0,427)">
+      <rect x="580" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.26"/>
+    </g>
+    <g transform="translate(0,448)">
+      <rect x="612" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.18"/>
+    </g>
+    <g transform="translate(0,469)">
+      <rect x="644" y="0"   width="30" height="15" rx="3" fill="#2dd4bf" opacity="0.11"/>
+    </g>
+  </g>
+
+  <!-- span count badge -->
+  <g transform="translate(892,196)">
+    <rect x="0" y="0" width="212" height="88" rx="10" fill="#0b0b14" opacity="0.72" stroke="#a78bfa" stroke-opacity="0.4"/>
+    <text x="20" y="42" font-family="JetBrainsMono Nerd Font, monospace" font-size="40" fill="#c4b5fd" font-weight="bold">43</text>
+    <text x="88" y="41" font-family="Noto Sans, sans-serif" font-size="17" fill="#94a3b8">spans</text>
+    <text x="20" y="68" font-family="Noto Sans, sans-serif" font-size="14" fill="#64748b">for one request</text>
+  </g>
+
+  <!-- magnifier over the staircase -->
+  <g opacity="0.5" filter="url(#lineGlow)">
+    <circle cx="360" cy="290" r="96" fill="none" stroke="#f0abfc" stroke-width="2.5"/>
+    <line x1="428" y1="358" x2="486" y2="416" stroke="#f0abfc" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- footer -->
+  <text x="120" y="560" font-family="Noto Sans, sans-serif" font-size="30" fill="#e2e8f0" font-weight="600">Every query is fast.</text>
+  <text x="120" y="598" font-family="Noto Sans, sans-serif" font-size="30" fill="#a78bfa" font-weight="600">The request is not.</text>
+
+  <text x="1080" y="598" text-anchor="end" font-family="JetBrainsMono Nerd Font, monospace" font-size="14" fill="#475569">part 1 / opentelemetry + quarkus</text>
+</svg>

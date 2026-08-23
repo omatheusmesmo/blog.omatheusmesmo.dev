@@ -14,7 +14,7 @@
 
 <figure class="entry-cover">
     {{- $alt := (.Params.cover.alt | default .Params.cover.caption | plainify) }}
-    
+
     {{/* Busca a imagem usando um seletor mais flexivel */}}
     {{- $cover := (.Resources.ByType "image").GetMatch (printf "*%s*" .Params.cover.image) }}
     {{- if not $cover }}
@@ -28,8 +28,8 @@
         {{- else -}}
             {{/* Otimizacao WebP com srcset responsivo */}}
             {{- $small := $cover.Resize "480x webp q75" -}}
-            {{- $medium := $cover.Resize "720x webp q75" -}}
-            {{- $large := $cover.Resize "1080x webp q80" -}}
+            {{- $medium := $cover.Resize "720x webp q90" -}}
+            {{- $large := $cover.Resize "1080x webp q90" -}}
 
             <img loading="{{ $loading }}"
                  {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}

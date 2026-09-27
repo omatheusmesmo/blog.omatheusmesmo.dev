@@ -35,7 +35,7 @@ hugo new content posts/[YYYY-MM-DD-slug-in-english]/index.pt.md  # Portuguese po
 - Ignores changes to `images/**`, `LICENSE`, `README.md`
 
 ### CI Artifacts
-- `update-profile.yml` syncs latest posts to a separate profile repo (`omatheusmesmo/omatheusmesmo`)
+- The newsletter and the profile README (`omatheusmesmo/omatheusmesmo`) live in a separate repo, `omatheusmesmo/newsletter`, and both read the published RSS feeds (blog and YouTube). Nothing in this repo sends email or edits the profile.
 
 ### Hugo Config (hugo.toml)
 - **Default language:** Portuguese (`pt-br`)

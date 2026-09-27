@@ -24,9 +24,13 @@
 {{- if .IsHome -}}
   {{- $first_post := (where site.RegularPages "Section" "posts") | first 1 -}}
   {{- range $first_post -}}
+    {{- $post := . -}}
     {{- with .Params.cover.image -}}
-      {{- $img := $.Resources.GetMatch . -}}
-      {{- if $img -}}
+      {{- $img := $post.Resources.GetMatch . -}}
+      {{- $svg := $post.Resources.GetMatch (replace . (path.Ext .) ".svg") -}}
+      {{- if and $svg $post.Params.cover.vector -}}
+        <link rel="preload" as="image" href="{{ $svg.RelPermalink }}" fetchpriority="high">
+      {{- else if $img -}}
         {{- $optimized := $img.Resize "1080x webp q80" -}}
         <link rel="preload" as="image" href="{{ $optimized.RelPermalink }}" fetchpriority="high">
       {{- end -}}

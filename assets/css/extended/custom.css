@@ -1,3 +1,7 @@
+:root {
+    --main-width: 840px;
+}
+
 /* Custom CSS to override PaperMod defaults */
 
 /* Responsive images within article content */

@@ -1,7 +1,7 @@
 ---
 title: "Por dentro do ArC, parte 3: beans que ninguém escreveu"
 date: 2026-10-11T10:00:00-03:00
-draft: true
+draft: false
 tags: ["Quarkus", "Java", "CDI", "ArC", "Dependency Injection", "Quarkus Extensions", "Build Time", "Quarkus Internals"]
 author: "Matheus Oliveira"
 slug: "quarkus-arc-beans-sinteticos-extensoes"

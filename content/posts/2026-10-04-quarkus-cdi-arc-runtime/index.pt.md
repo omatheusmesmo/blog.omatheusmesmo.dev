@@ -1,7 +1,7 @@
 ---
 title: "Por dentro do ArC, parte 2: proxies, interceptors e o bean que sumiu"
 date: 2026-10-04T10:00:00-03:00
-draft: true
+draft: false
 tags: ["Quarkus", "Java", "CDI", "ArC", "Dependency Injection", "Build Time", "Quarkus Internals"]
 author: "Matheus Oliveira"
 slug: "quarkus-arc-client-proxy-interceptors-beans-removidos"

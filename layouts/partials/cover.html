@@ -21,21 +21,33 @@
         {{- $cover = (resources.ByType "image").GetMatch (printf "*%s*" .Params.cover.image) }}
     {{- end }}
 
+    {{- if and $cover $.cxt.Params.cover.vector -}}
+        {{- with $.cxt.Resources.GetMatch (replace $.cxt.Params.cover.image (path.Ext $.cxt.Params.cover.image) ".svg") -}}
+            {{- $cover = . -}}
+        {{- end -}}
+    {{- end -}}
+
     {{- if $cover -}}
         {{- if eq $cover.MediaType.SubType "svg" -}}
             <img loading="{{ $loading }}" {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
-                 src="{{ $cover.RelPermalink }}" decoding="async" alt="{{ $alt }}">
+                 src="{{ $cover.RelPermalink }}" decoding="async" alt="{{ $alt }}"
+                 style="width: 100%; height: auto;">
         {{- else -}}
             {{/* Otimizacao WebP com srcset responsivo */}}
             {{- $small := $cover.Resize "480x webp q75" -}}
-            {{- $medium := $cover.Resize "720x webp q90" -}}
+            {{- $medium := $cover.Resize "840x webp q90" -}}
             {{- $large := $cover.Resize "1080x webp q90" -}}
+            {{- $srcset := printf "%s 480w, %s 840w, %s 1080w" $small.RelPermalink $medium.RelPermalink $large.RelPermalink -}}
+            {{- if ge $cover.Width 1680 -}}
+                {{- $xlarge := $cover.Resize "1680x webp q90" -}}
+                {{- $srcset = printf "%s, %s 1680w" $srcset $xlarge.RelPermalink -}}
+            {{- end -}}
 
             <img loading="{{ $loading }}"
                  {{ if (eq $fetchPriority "high") }}fetchpriority="high"{{ end }}
-                 srcset="{{ $small.RelPermalink }} 480w, {{ $medium.RelPermalink }} 720w, {{ $large.RelPermalink }} 1080w"
+                 srcset="{{ $srcset }}"
                  src="{{ $large.RelPermalink }}"
-                 sizes="(max-width: 768px) 100vw, 720px"
+                 sizes="(max-width: 768px) 100vw, 840px"
                  width="{{ $cover.Width }}" height="{{ $cover.Height }}"
                  decoding="async"
                  {{/* Mantemos o aspect-ratio para zerar o CLS sem forçar largura 100% */}}

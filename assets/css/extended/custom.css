@@ -163,3 +163,10 @@ article img {
     color: var(--theme);
 }
 
+
+.post-content pre.mermaid {
+  background: transparent;
+  border: none;
+  text-align: center;
+  overflow-x: auto;
+}

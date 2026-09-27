@@ -41,5 +41,28 @@
 
 
 
+{{- /* Mermaid diagrams, loaded only on pages that use them */ -}}
+{{- if and .IsPage (strings.Contains .RawContent "```mermaid") }}
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.esm.min.mjs";
+
+  const diagrams = [...document.querySelectorAll("pre.mermaid")];
+  diagrams.forEach((el) => (el.dataset.source = el.textContent));
+
+  const render = async () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", flowchart: { wrappingWidth: 360 } });
+    diagrams.forEach((el) => {
+      el.removeAttribute("data-processed");
+      el.textContent = el.dataset.source;
+    });
+    await mermaid.run({ nodes: diagrams });
+  };
+
+  render();
+  document.getElementById("theme-toggle")?.addEventListener("click", () => setTimeout(render, 0));
+</script>
+{{- end }}
+
 {{- /* Security Headers (Hints for the browser) */ -}}
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">

@@ -40,7 +40,7 @@ Esta é a primeira parte de uma série sobre **quem roda o seu código no Quarku
 
 ## O laboratório
 
-Toda afirmação desta série tem um teste por trás, num demo público: [omatheusmesmo/demos, `quarkus/reactive-core`](https://github.com/omatheusmesmo/demos/tree/main/quarkus/reactive-core). Cada endpoint devolve a thread que o atendeu, e cada teste verifica essa thread, não só o corpo da resposta. Ele roda no Quarkus 3.40.1 com Java 25, e todos os testes deste artigo passam ali. O demo também consegue rodar a suíte inteira de novo contra o Quarkus 4.0.0.Beta1; a seção 8 conta o que aconteceu quando fiz isso.
+Toda afirmação desta série tem um teste por trás, num demo público: [omatheusmesmo/demos, `quarkus/reactive-core`](https://github.com/omatheusmesmo/demos/tree/main/quarkus/reactive-core). Cada endpoint devolve a thread que o atendeu, e cada teste verifica essa thread, não só o corpo da resposta. Ele roda no Quarkus 3.40.1 com Java 25, e todos os testes deste artigo também passam no Quarkus 4.0.0.Beta1; a seção 8 conta o que foi preciso para chegar lá.
 
 Com o laboratório de threads rodando, um comando mostra a série inteira em três linhas:
 
@@ -57,6 +57,16 @@ Três endpoints, três tipos de thread. Este artigo é sobre a segunda linha.
 ## 1. Uma thread, muitas conexões
 
 A ideia é mais antiga que o I/O não bloqueante do Java. Em vez de estacionar uma thread em cada socket enquanto ela espera bytes, você pede ao sistema operacional que avise quais sockets estão prontos (epoll no Linux, kqueue no macOS), e uma única thread percorre essas notificações em loop, executando o código interessado em cada uma. Esse loop é o **event loop**, e o desenho é o **padrão reactor**.
+
+```mermaid
+flowchart LR
+    C1["Conexão 1"] --> OS["epoll / kqueue<br/>quais sockets estão prontos?"]
+    C2["Conexão 2"] --> OS
+    C3["Conexão 3"] --> OS
+    OS --> EL["Thread do event loop"]
+    EL --> H["Roda o handler de cada conexão pronta, um de cada vez"]
+    H --> EL
+```
 
 O [Netty](https://netty.io/), a biblioteca de rede por baixo do Vert.x e, portanto, do Quarkus, é construído em torno dele. O Javadoc do seu `EventLoop` tem duas frases, e as duas importam:
 
@@ -81,6 +91,16 @@ e acrescenta a garantia que torna o modelo utilizável:
 > Even though a Vertx instance maintains multiple event loops, any particular handler will never be executed concurrently, and in most cases (with the exception of worker verticles) will always be called using the *exact same event loop*.
 
 Quando o Quarkus atende uma requisição HTTP, existe um servidor HTTP do Vert.x por baixo, rodando nesses event loops. O mesmo vale para mensageria, gRPC e quase todo tipo de I/O no Quarkus.
+
+```mermaid
+flowchart TB
+    V["Instância do Vert.x"] --> EL0["vert.x-eventloop-thread-0"]
+    V --> EL1["vert.x-eventloop-thread-1"]
+    EL0 --> A["Conexões registradas no loop 0<br/>todo evento de cada uma roda aqui"]
+    EL1 --> B["Conexões registradas no loop 1<br/>todo evento de cada uma roda aqui"]
+```
+
+Esse é o formato do teste do começo: 24 conexões espalhadas por dois loops, cada conexão ficando no loop em que foi registrada.
 
 ## 3. Quantos event loops o Quarkus sobe?
 
@@ -119,6 +139,19 @@ O manual lista o que conta como bloqueio: `Thread.sleep()`, esperar por um lock 
 > If you have a single event loop, and you want to handle 10000 http requests per second, then it's clear that each request can't take more than 0.1 ms to process, so you can't block for any more time than that.
 
 A regra não é "nunca faça nada lento". É um orçamento: o tempo que você gasta no event loop é o tempo que todas as outras conexões daquele loop esperam.
+
+```mermaid
+sequenceDiagram
+    participant A as Conexão A
+    participant EL as Event loop
+    participant B as Conexão B
+    A->>EL: requisição
+    Note over EL: o handler de A bloqueia por 200 ms
+    B->>EL: requisição, ainda não lida
+    Note over B: espera, o loop dela está ocupado
+    EL-->>A: resposta
+    EL-->>B: resposta, atrasada pelo handler de A
+```
 
 Quando você quebra a regra, o Vert.x avisa. Um vigia, o blocked thread checker, registra um aviso com stack trace quando um event loop não retorna a tempo:
 
@@ -161,6 +194,18 @@ Tem mais uma peça do core do Vert.x em que o resto da série se apoia. Toda vez
 
 O Quarkus refina isso com os **duplicated contexts**: um por unidade de processamento (uma requisição HTTP, uma mensagem do Kafka), ligado a um event loop mas não compartilhado com outras requisições. Todo endpoint do demo reporta `duplicatedContext=true`, inclusive os que rodam em workers e em virtual threads. É ali que o Quarkus guarda o estado de cada requisição, como o request scope do CDI e os dados de tracing, sem `ThreadLocal`. A parte 2 mostra o que isso muda na prática, incluindo um caso em que um `ThreadLocal` parece funcionar, e por quê.
 
+O contexto do event loop de onde esses duplicados saem, o **root context**, é compartilhado por todas as requisições que ele recebe. Guardar dados de uma requisição ali vazaria esses dados para requisições sem relação, então a API `ContextLocals` que o Quarkus traz recusa com uma `UnsupportedOperationException`: "Access to Context Locals are forbidden from a 'root' context as it can leak data between unrelated processing". O laboratório tem um endpoint que tenta mesmo assim, e o `ContextTest` espera a recusa.
+
+```mermaid
+flowchart TB
+    R["Root context do event loop<br/>compartilhado por todas as requisições que recebe"]
+    R --> D1["Duplicated context<br/>requisição 1"]
+    R --> D2["Duplicated context<br/>requisição 2"]
+    D1 --> OK1["ContextLocals.put: permitido"]
+    D2 --> OK2["ContextLocals.put: permitido"]
+    R --> NO["ContextLocals.put: recusado"]
+```
+
 ## 7. Saindo do event loop, e a fila que ninguém espera
 
 Aplicações reais têm código bloqueante: JDBC, sistema de arquivos, bibliotecas com API síncrona. O Vert.x não finge o contrário. O manual diz "the real world is not like that. (Have you watched the news lately?)" e oferece o `executeBlocking`, que roda código numa thread worker e devolve o resultado como um future.
@@ -187,6 +232,20 @@ private static Uni<String> submit(Context context, ConcurrencyTracker tracker, b
 }
 ```
 
+```mermaid
+sequenceDiagram
+    participant EL as Event loop
+    participant Q as Fila do contexto
+    participant W as Pool de workers
+    EL->>Q: executeBlocking tarefa 1
+    EL->>Q: executeBlocking tarefa 2
+    Q->>W: tarefa 1
+    Note over W: 200 ms
+    W-->>Q: tarefa 1 concluída
+    Q->>W: tarefa 2
+    Note over W: 200 ms
+```
+
 Com `ordered = true`, o padrão, o pico é **1**: a segunda tarefa espera a primeira, mesmo com workers livres. Com `ordered = false`, o pico é **2**. Se você tira trabalho bloqueante de um handler e não entende por que ele não roda em paralelo, essa é a primeira coisa a verificar.
 
 ## 8. O que o Quarkus 4 muda aqui
@@ -195,13 +254,29 @@ O Quarkus 4.0.0.Beta1 passa para o Vert.x 5.1.8 e o Netty 4.2.18. Comparei o man
 
 Abaixo do Vert.x, o Netty 4.2 desacopla o event loop do transporte. Em vez de um `NioEventLoopGroup` ou um `EpollEventLoopGroup`, um grupo de event loops agora recebe um handler de I/O (`NioIoHandler`, `EpollIoHandler`, `IoUringIoHandler`), e o io_uring sai da incubadora para virar um transporte suportado. O Netty 4.2 também torna padrão um novo alocador de memória que, segundo o guia de migração, "was also designed from the start to work well with virtual threads". Essa frase vai importar na parte 4.
 
-Depois rodei o demo de novo na 4.0.0.Beta1. Todo módulo que usa o Quarkus do jeito que uma aplicação usa (REST, o REST Client, PostgreSQL, Kafka, Redis, o Scheduler) passou com os mesmos resultados da 3.40.1. O laboratório de threads, onde estão os testes deste artigo, nem compilou:
+Depois rodei o demo de novo na 4.0.0.Beta1. Todo módulo que usa o Quarkus do jeito que uma aplicação usa (REST, o REST Client, PostgreSQL, Kafka, Redis, o Scheduler) passou com os mesmos resultados da 3.40.1. O laboratório de threads, onde estão os testes deste artigo, nem compilou de primeira:
 
 ```text
 ContextResource.java:[50,13] no suitable method found for putLocal(java.lang.String,java.lang.String)
 ```
 
-O Vert.x 5 removeu o `Context.putLocal(Object, Object)`, a forma antiga de guardar dados num contexto, que o laboratório usa para mostrar que o Quarkus recusa locals num root context. Os conceitos deste artigo valem no Quarkus 4; aquele pedaço do laboratório precisa migrar para a API mais nova de context locals antes de os testes rodarem lá. É um bom lembrete do que esta série vive encontrando: um modelo pode sobreviver a um upgrade enquanto uma das suas APIs não sobrevive.
+O laboratório chamava `Context.putLocal(Object, Object)` no root context para mostrar a recusa da seção 6. O Vert.x 5 removeu esse método: o `Context` dele agora só aceita chaves tipadas `ContextLocal`. A correção foi parar de chamar a API do Vert.x diretamente e usar o `ContextLocals`, a API do SmallRye que o Quarkus traz nas duas linhas (`smallrye-common-vertx-context` para o Vert.x 4, `smallrye-common-vertx5-context` para o Vert.x 5). O endpoint agora roda essa API no root context:
+
+```java
+@GET
+@Path("/root")
+public Uni<Observed<String>> root() {
+    Context root = VertxContext.getRootContext(Vertx.currentContext());
+    return Uni.createFrom()
+            .item(() -> {
+                ContextLocals.put(RequestTagFilter.KEY, "shared by every request on this event loop");
+                return Observed.of("stored on the root context");
+            })
+            .runSubscriptionOn(task -> root.runOnContext(ignored -> task.run()));
+}
+```
+
+O mesmo código compila nas duas versões, e os 39 testes do laboratório de threads passam na 3.40.1 e na 4.0.0.Beta1. Para conferir que o teste não passava por acaso, tirei a linha do `runSubscriptionOn`, o que deixa o código no duplicated context: a gravação deu certo e o teste falhou, como devia. A recusa sobreviveu ao upgrade; a API que usei para provocá-la, não. É um bom lembrete do que esta série vive encontrando: um modelo pode sobreviver a um upgrade enquanto uma das suas APIs não sobrevive.
 
 ## Conclusão
 
@@ -211,7 +286,7 @@ O que este artigo deixou em aberto é a pergunta no título da série. Se a requ
 
 ## Recursos
 
-- [Demo: `quarkus/reactive-core`](https://github.com/omatheusmesmo/demos/tree/main/quarkus/reactive-core), em especial `labs/threading` (`EventLoopsTest`, `AwaitTest`, `ExecuteBlockingTest`)
+- [Demo: `quarkus/reactive-core`](https://github.com/omatheusmesmo/demos/tree/main/quarkus/reactive-core), em especial `labs/threading` (`EventLoopsTest`, `AwaitTest`, `ContextTest`, `ExecuteBlockingTest`)
 - [Vert.x Core Manual](https://vertx.io/docs/vertx-core/java/): Reactor and Multi-Reactor, the Golden Rule, the Context object, Running blocking code
 - [Netty user guide for 4.x](https://netty.io/wiki/user-guide-for-4.x.html) e [Netty 4.2 Migration Guide](https://github.com/netty/netty/wiki/Netty-4.2-Migration-Guide)
 - [Quarkus reactive architecture](https://quarkus.io/guides/quarkus-reactive-architecture) e [Vert.x reference guide](https://quarkus.io/guides/vertx-reference)

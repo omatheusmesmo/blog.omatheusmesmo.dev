@@ -40,7 +40,7 @@ This is the first part of a series about **who runs your code in Quarkus**. Befo
 
 ## The lab
 
-Every claim in this series is backed by a test in a public demo: [omatheusmesmo/demos, `quarkus/reactive-core`](https://github.com/omatheusmesmo/demos/tree/main/quarkus/reactive-core). Each endpoint returns the thread that served it, and each test asserts on that thread, not only on the response body. It runs on Quarkus 3.40.1 and Java 25, and it is rerun against Quarkus 4.0.0.Beta1.
+Every claim in this series is backed by a test in a public demo: [omatheusmesmo/demos, `quarkus/reactive-core`](https://github.com/omatheusmesmo/demos/tree/main/quarkus/reactive-core). Each endpoint returns the thread that served it, and each test asserts on that thread, not only on the response body. It runs on Quarkus 3.40.1 and Java 25, and every test in this article passes there. The demo can also rerun the whole suite against Quarkus 4.0.0.Beta1; section 8 tells what happened when I did.
 
 With the threading lab running, one command shows the whole series in three lines:
 
@@ -195,7 +195,13 @@ Quarkus 4.0.0.Beta1 moves to Vert.x 5.1.8 and Netty 4.2.18. I compared the Vert.
 
 Below Vert.x, Netty 4.2 decouples the event loop from the transport. Instead of a `NioEventLoopGroup` or an `EpollEventLoopGroup`, an event loop group now takes an I/O handler (`NioIoHandler`, `EpollIoHandler`, `IoUringIoHandler`), and io_uring graduates from incubator to a supported transport. Netty 4.2 also makes a new memory allocator the default, which its migration guide says "was also designed from the start to work well with virtual threads". That sentence will matter in part 4.
 
-The mental model of this article survives the upgrade unchanged.
+Then I reran the demo on 4.0.0.Beta1. Every module that uses Quarkus the way an application does (REST, the REST Client, PostgreSQL, Kafka, Redis, the Scheduler) passed with the same outcomes as on 3.40.1. The threading lab, where the tests of this article live, did not even compile:
+
+```text
+ContextResource.java:[50,13] no suitable method found for putLocal(java.lang.String,java.lang.String)
+```
+
+Vert.x 5 removed `Context.putLocal(Object, Object)`, the old way of storing data on a context, which the lab uses to show that Quarkus refuses locals on a root context. The concepts of this article hold on Quarkus 4; that piece of the lab has to move to the newer context local API before its tests run there. It is a good reminder of what this series keeps finding: a model can survive an upgrade while one of its APIs does not.
 
 ## Conclusion
 

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="2400" height="1260">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a0f1e"/><stop offset="1" stop-color="#161d33"/></linearGradient>
+<pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#ffffff" stroke-opacity="0.035"/></pattern>
+<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+<linearGradient id="lit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fd8ff"/><stop offset="1" stop-color="#4695eb"/></linearGradient>
+</defs>
+<rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" fill="url(#grid)"/>
+<rect x="150" y="120" width="900" height="390" rx="26" fill="#121a2e" stroke="#2a3654" stroke-width="2"/>
+<rect x="200" y="160" width="520" height="10" rx="5" fill="#2a3654"/>
+<rect x="200" y="186" width="380" height="10" rx="5" fill="#2a3654"/>
+<rect x="200" y="212" width="450" height="10" rx="5" fill="#2a3654"/>
+<line x1="308" y1="380" x2="367" y2="380" stroke="#9fd8ff" stroke-width="3" stroke-dasharray="0"/>
+<path d="M359 373 l9 7 l-9 7" fill="none" stroke="#9fd8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="483" y1="380" x2="542" y2="380" stroke="#9fd8ff" stroke-width="3" stroke-dasharray="0"/>
+<path d="M534 373 l9 7 l-9 7" fill="none" stroke="#9fd8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="658" y1="380" x2="717" y2="380" stroke="#3a4666" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M709 373 l9 7 l-9 7" fill="none" stroke="#3a4666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="833" y1="380" x2="892" y2="380" stroke="#3a4666" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M884 373 l9 7 l-9 7" fill="none" stroke="#3a4666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="188" y="344" width="124" height="72" rx="12" fill="#161d31" stroke="#9fd8ff" stroke-width="3"/>
+<text x="250" y="386" text-anchor="middle" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="15" fill="#9fd8ff">item</text>
+<rect x="363" y="344" width="124" height="72" rx="12" fill="#161d31" stroke="#9fd8ff" stroke-width="3"/>
+<text x="425" y="386" text-anchor="middle" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="15" fill="#9fd8ff">map</text>
+<circle cx="600" cy="380" r="70" fill="#9fd8ff" fill-opacity="0.25" filter="url(#soft)"/>
+<rect x="538" y="344" width="124" height="72" rx="12" fill="#161d31" stroke="#9fd8ff" stroke-width="3"/>
+<text x="600" y="386" text-anchor="middle" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="15" fill="#9fd8ff">call</text>
+<rect x="713" y="344" width="124" height="72" rx="12" fill="#111827" stroke="#3a4666" stroke-width="2"/>
+<text x="775" y="386" text-anchor="middle" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="15" fill="#4b587a">onFailure</text>
+<rect x="888" y="344" width="124" height="72" rx="12" fill="#111827" stroke="#3a4666" stroke-width="2"/>
+<text x="950" y="386" text-anchor="middle" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="15" fill="#4b587a">subscriber</text>
+<path d="M250 236 V330" stroke="#9fd8ff" stroke-width="4" stroke-linecap="round"/>
+<path d="M240 318 l10 14 l10 -14" fill="none" stroke="#4695eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="268" y="270" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="18" fill="#9fd8ff">subscribe()</text>
+<text x="1032" y="490" text-anchor="end" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="15" fill="#6f7fa8">Uni&lt;T&gt;</text>
+</svg>

@@ -319,7 +319,7 @@ Three annotations and the Kafka topic becomes an HTTP stream in the browser. In 
 
 ### The detail that takes applications down: the consumer thread
 
-> **Correction (October 2026):** the first version of this section said that every `@Incoming` method runs on the event loop. That stopped being true in Quarkus 3.10, as the tests written for [part 2 of the reactive core series](/en/posts/quarkus-who-runs-your-code/) showed. The section below is fixed.
+> **Edited in October 2026:** this section was updated for the execution model of Quarkus 3.10 and later.
 
 Material written for older versions, the book included, still teaches the old rule. Up to Quarkus 3.9, **a synchronous `@Incoming` method ran on an I/O thread, the Vert.x event loop**, and a blocking call there (persisting to the database, calling a synchronous HTTP API) blocked the event loop and the throughput of the whole application. Since [Quarkus 3.10](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.10), messaging follows the same rule as Quarkus REST: the signature decides. A synchronous method runs on a worker thread, and an asynchronous one (`Uni`, `CompletionStage`) on the event loop:
 

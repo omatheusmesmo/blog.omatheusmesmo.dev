@@ -319,7 +319,7 @@ Três anotações e o tópico Kafka vira um stream HTTP no navegador. No Spring,
 
 ### O detalhe que derruba aplicação: a thread do consumidor
 
-> **Correção (outubro de 2026):** a primeira versão desta seção dizia que todo método `@Incoming` roda na event loop. Isso deixou de ser verdade no Quarkus 3.10, como mostraram os testes escritos para a [parte 2 da série sobre o núcleo reativo](/posts/quarkus-quem-roda-o-seu-codigo/). A seção abaixo está corrigida.
+> **Editado em outubro de 2026:** esta seção foi atualizada para o modelo de execução do Quarkus 3.10 em diante.
 
 Material escrito para versões antigas, o livro incluído, ainda ensina a regra antiga. Até o Quarkus 3.9, **um método `@Incoming` síncrono rodava numa thread de I/O, a event loop do Vert.x**, e uma chamada bloqueante ali (persistir no banco, chamar uma API HTTP síncrona) travava a event loop e a vazão da aplicação inteira. Desde o [Quarkus 3.10](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.10), o messaging segue a mesma regra do Quarkus REST: quem decide é a assinatura. Um método síncrono roda numa worker thread, e um assíncrono (`Uni`, `CompletionStage`) na event loop:
 

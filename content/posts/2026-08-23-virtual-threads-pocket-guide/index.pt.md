@@ -606,17 +606,13 @@ Duas pegadinhas concretas para guardar:
 
 **Não faça pool de virtual thread.** Além de contrariar o design, o
 [benchmark do Nigro](https://quarkus.io/blog/to-cache-or-not-to-cache-virtual-threads/)
-mediu pouco a ganhar com isso.
+mediu pouco a ganhar com isso. Na versão revisada em 11 de setembro, com todos os números
+medidos de novo depois que um bug no reciclador do Jackson foi encontrado no próprio
+benchmark, o pool ganha por pouco menos de 3% com heap de 4 GB e retém cerca de 60 MB de
+`StackChunk` enquanto o pool existir. Com heap de 900 MB, um terço das execuções com pool
+caiu em centenas de Full GCs, que o autor deixa como "reported, not explained".
 
-> **Correção (outubro de 2026):** este parágrafo citava a versão original daquele post:
-> pooling ganhava 13,5% com heap de 4 GB e perdia 34% com 1 GB, com 461 Full GCs contra 4,
-> explicado pela promoção do `StackChunk` de virtual threads longevas para o old gen. Em 11
-> de setembro o post foi revisado a fundo. O próprio benchmark tinha um bug: o reciclador
-> padrão do Jackson segurava cerca de 200 MB a mais de heap vivo nas execuções com pool.
-> Depois da correção, o pool ganha cerca de 3% com heap de 4 GB, e o autor retirou a
-> explicação por `StackChunk` para o colapso em heaps pequenos, que agora ele descreve como
-> "reported, not explained". O conselho continua valendo; os números e o mecanismo que
-> este parágrafo dava, não. Leia o post revisado.
+> **Editado em outubro de 2026:** atualizado para a versão revisada do post do Nigro.
 
 **Cuidado com recursão profunda no G1.** O G1 não suporta `StackChunk` humongous. Se a
 pilha de uma virtual thread passar de metade do tamanho da região (que pode ser 512 KB em

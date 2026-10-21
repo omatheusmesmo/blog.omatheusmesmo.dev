@@ -269,14 +269,14 @@ public Uni<Observed<String>> root() {
     Context root = VertxContext.getRootContext(Vertx.currentContext());
     return Uni.createFrom()
             .item(() -> {
-                ContextLocals.put(RequestTagFilter.KEY, "shared by every request on this event loop");
+                ContextLocals.put(RequestTagFilter.REGULAR.tagKey(), "shared by every request on this event loop");
                 return Observed.of("stored on the root context");
             })
             .runSubscriptionOn(task -> root.runOnContext(ignored -> task.run()));
 }
 ```
 
-The same source compiles on both versions, and all 39 tests of the threading lab pass on 3.40.1 and on 4.0.0.Beta1. To check that the test was not passing by accident, I removed the `runSubscriptionOn` line, which leaves the code on the duplicated context: the store succeeded and the test failed, as it should. The refusal survived the upgrade; the API I used to provoke it did not. It is a good reminder of what this series keeps finding: a model can survive an upgrade while one of its APIs does not.
+The same source compiles on both versions, and all 45 tests of the threading lab pass on 3.40.1 and on 4.0.0.Beta1. To check that the test was not passing by accident, I removed the `runSubscriptionOn` line, which leaves the code on the duplicated context: the store succeeded and the test failed, as it should. The refusal survived the upgrade; the API I used to provoke it did not. It is a good reminder of what this series keeps finding: a model can survive an upgrade while one of its APIs does not.
 
 ## Conclusion
 

@@ -39,7 +39,7 @@ method is intended to be reactive, consider using Hibernate Reactive, which supp
 context.
 ```
 
-O parágrafo continua no guia do Quarkus 3.40.1, da 4.0.0.Beta1 e da branch main. O código parou de aplicá-lo em março. Este artigo é sobre essa decisão, tomada para cada método que você escreve: a [parte 1](/posts/quarkus-event-loop-do-zero/) mostrou que toda requisição HTTP chega num event loop, e esta parte mostra **quem decide qual thread roda o seu código depois disso**, regra por regra, e onde as regras mudam de uma extensão para outra.
+O parágrafo continua no guia de REST do Quarkus 3.40.1, da 4.0.0.Beta1 e da branch main. O código parou de aplicá-lo em março, e o migration guide anunciou a mudança; só o guia de REST nunca foi atualizado. Este artigo é sobre essa decisão, tomada para cada método que você escreve: a [parte 1](/posts/quarkus-event-loop-do-zero/) mostrou que toda requisição HTTP chega num event loop, e esta parte mostra **quem decide qual thread roda o seu código depois disso**, regra por regra, e onde as regras mudam de uma extensão para outra.
 
 ## O laboratório
 
@@ -118,7 +118,7 @@ Os testes também verificam que os endpoints numa worker, no event loop e em vir
 
 A linha do `@NonBlocking` merece um comentário. Por que manter um método síncrono no event loop? Porque o salto para uma worker tem custo. Em 2021, o time do Quarkus mediu que o `@Blocking` reduzia o throughput máximo em cerca de 30% nos seus benchmarks, um custo que diminui quanto mais o método demora. Para um método que só faz trabalho rápido e não bloqueante, o salto custa mais que o trabalho.
 
-## 4. A regra que só existe no guia
+## 4. A regra que só existe no guia de REST
 
 De volta ao `@Transactional`. Em março de 2026, o [quarkusio/quarkus#51063](https://github.com/quarkusio/quarkus/pull/51063), "Support @Transactional for Hibernate Reactive", foi integrado para o Quarkus 3.35. Entre muitas outras mudanças, ele removeu duas linhas do método mostrado na seção 2:
 
@@ -130,7 +130,7 @@ De volta ao `@Transactional`. Em março de 2026, o [quarkusio/quarkus#51063](htt
 
 O motivo está no título. O `@Transactional` agora também abre transações reativas com o Hibernate Reactive, então um método `Uni` com `@Transactional` é um método reativo legítimo, que precisa ficar no event loop. Mandá-lo para uma worker seria o erro sobre o qual o Escoffier alertou, na direção contrária.
 
-A consequência é o que o teste do começo mostra. Sem Hibernate Reactive, um endpoint `Uni` com `@Transactional` fica no event loop, e o interceptor de JTA se recusa a abrir uma transação ali. A falha é barulhenta, e a mensagem aponta as duas saídas: `@Blocking` se o método deve bloquear, Hibernate Reactive se ele deve ser reativo. Se você tem um endpoint `Uni` que dependia do `@Transactional` para chegar numa worker numa versão anterior à 3.35, este é o erro que aparece depois do upgrade, enquanto o guia continua dizendo que deveria funcionar.
+A consequência é o que o teste do começo mostra. Sem Hibernate Reactive, um endpoint `Uni` com `@Transactional` fica no event loop, e o interceptor de JTA se recusa a abrir uma transação ali. A falha é barulhenta, e a mensagem aponta as duas saídas: `@Blocking` se o método deve bloquear, Hibernate Reactive se ele deve ser reativo. Se você tem um endpoint `Uni` que dependia do `@Transactional` para chegar numa worker numa versão anterior à 3.35, este é o erro que aparece depois do upgrade. A mudança foi anunciada: o [migration guide da 3.35](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.35) tem uma seção chamada "Methods annotated with `@Transactional` are no longer automatically considered blocking by Quarkus", com o mesmo conselho do erro, "If a method is blocking but returns a `Uni<T>`, it requires an explicit `@Blocking` annotation". O guia de REST é o único lugar que ainda diz o contrário.
 
 ## 5. `@RunOnVirtualThread`, a terceira resposta
 
@@ -155,7 +155,7 @@ if (!blocking) {
 }
 ```
 
-O build só falha quando o `@RunOnVirtualThread` encontra um `@NonBlocking` explícito. Num método que é não bloqueante porque devolve um `Uni`, ele devolve `true`, e o teste do `/dispatch/virtual-uni` confirma: o método roda numa virtual thread. Se um endpoint `Uni` ganha alguma coisa com isso é assunto da parte 4. O que importa aqui é que o guia descreve uma regra mais rígida que a que o código aplica.
+O build só falha quando o `@RunOnVirtualThread` encontra um `@NonBlocking` explícito. Num método que é não bloqueante porque devolve um `Uni`, ele devolve `true`, e o teste do `/dispatch/virtual-uni` confirma: o método roda numa virtual thread. O que importa aqui é que o guia descreve uma regra mais rígida que a que o código aplica, e o código parece proposital: quando o [quarkusio/quarkus#55389](https://github.com/quarkusio/quarkus/pull/55389) corrigiu um erro relacionado na 3.39.1, o autor descreveu o `@RunOnVirtualThread` como "already handled as blocking in the actual code for resteasy". Um método `Uni` com ele se comporta como um método `Uni` com `@Blocking`, numa virtual thread em vez de uma worker. Isso só compensa se o método bloquear antes de devolver o `Uni`; caso contrário, ele paga o salto da seção 3 por nada.
 
 As threads em si são fáceis de achar em logs e thread dumps: o Quarkus as nomeia `quarkus-virtual-thread-` seguido de um número, e `quarkus.virtual-threads.name-prefix` muda o prefixo.
 
@@ -259,7 +259,7 @@ A regra da assinatura não é exclusiva do Quarkus REST.
 | `@RunOnVirtualThread void consume(String)` | virtual thread |
 | `@Transactional void consume(String)` | worker |
 
-Nem sempre foi assim. O messaging chamava consumers síncronos no event loop, e passou para a regra da assinatura no Quarkus 3.10, com o [quarkusio/quarkus#39768](https://github.com/quarkusio/quarkus/pull/39768). O comportamento antigo está a uma propriedade de distância, `quarkus.messaging.blocking.signatures.execution.mode=event-loop`, e um teste com essa propriedade mostra o mesmo consumer `void` de volta no event loop. Se você aprendeu Reactive Messaging com material escrito antes da 3.10, confira o que ele diz sobre isso.
+Nem sempre foi assim. O messaging chamava consumers síncronos no event loop, e passou para a regra da assinatura no Quarkus 3.10, com o [quarkusio/quarkus#39768](https://github.com/quarkusio/quarkus/pull/39768), como o [migration guide da 3.10](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.10) anunciou. O comportamento antigo está a uma propriedade de distância, `quarkus.messaging.blocking.signatures.execution.mode=event-loop`, e um teste com essa propriedade mostra o mesmo consumer `void` de volta no event loop. Segundo o migration guide, a mesma propriedade também aceita `virtual-thread`. Se você aprendeu Reactive Messaging com material escrito antes da 3.10, confira o que ele diz sobre isso.
 
 Olhe a última linha da tabela. No messaging, `@Transactional` continua significando bloqueante. O guia diz "the presence of `@Transactional` annotation implies blocking execution", e o código concorda: o `QuarkusMediatorConfigurationUtil` ainda trata `transactionalAnnotation != null` como `@Blocking`. **A mesma anotação manda um método para uma worker numa extensão e o deixa no event loop em outra.** No Quarkus REST, o motivo é o da seção 4: o `@Transactional` virou uma ferramenta reativa também.
 
@@ -267,7 +267,9 @@ Olhe a última linha da tabela. No messaging, `@Transactional` continua signific
 
 ## 9. No Quarkus 4
 
-Todos os testes deste artigo passam no Quarkus 4.0.0.Beta1 com os mesmos resultados, incluindo o do `@Transactional` e os quatro acrescentados para este artigo. As regras de dispatch não mudaram com o Vert.x 5. O guia também não: o parágrafo do `@Transactional` continua lá.
+Todos os testes deste artigo passam no Quarkus 4.0.0.Beta1 com os mesmos resultados, incluindo o do `@Transactional` e os quatro acrescentados para este artigo. As regras de dispatch não mudaram com o Vert.x 5. O guia de REST também não: o parágrafo do `@Transactional` continua lá.
+
+Uma regra em torno dessas anotações muda, fora das extensões mostradas aqui. O SmallRye Fault Tolerance 7, que vem com o Quarkus 4, não aceita mais `@Blocking` e `@NonBlocking` em métodos protegidos: o [migration guide da 4.0](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-4.0) diz que o build os marca como inválidos, "because these annotations may only be put on 'entrypoints'", e indica o `@Asynchronous` do MicroProfile no lugar do `@Blocking`. Se você usava `@Blocking` num método com `@Retry` ou `@Timeout`, é esse o erro de build a esperar.
 
 ## Conclusão
 
@@ -284,5 +286,6 @@ Tudo isso é sobre onde um método **começa**. Com o Mutiny, o que acontece dep
 - [Massive performance without headaches](https://quarkus.io/blog/resteasy-reactive-faq/), Georgios Andrianakis, 2021
 - [Guia do Quarkus REST: execution model](https://quarkus.io/guides/rest#execution-model)
 - [Virtual thread support reference](https://quarkus.io/guides/virtual-threads) e [Quarkus Messaging: execution model](https://quarkus.io/guides/messaging)
-- [quarkusio/quarkus#51063](https://github.com/quarkusio/quarkus/pull/51063) (`@Transactional` para Hibernate Reactive) e [quarkusio/quarkus#39768](https://github.com/quarkusio/quarkus/pull/39768) (execution mode do messaging)
+- [quarkusio/quarkus#51063](https://github.com/quarkusio/quarkus/pull/51063) (`@Transactional` para Hibernate Reactive) e [quarkusio/quarkus#39768](https://github.com/quarkusio/quarkus/pull/39768) (execution mode do messaging), e [quarkusio/quarkus#55389](https://github.com/quarkusio/quarkus/pull/55389) (`@RunOnVirtualThread` com endpoints bloqueantes)
+- Migration guides do Quarkus para a [3.10](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.10), a [3.35](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.35) e a [4.0](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-4.0)
 - Antes nesta série: [parte 1, o event loop do zero](/posts/quarkus-event-loop-do-zero/)

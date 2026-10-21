@@ -603,12 +603,19 @@ address.
 
 Two concrete gotchas to remember:
 
-**Do not pool virtual threads.** Beyond contradicting the design,
+**Do not pool virtual threads.** It contradicts the design, and
 [Nigro's benchmark](https://quarkus.io/blog/to-cache-or-not-to-cache-virtual-threads/)
-shows why: on a 4 GB heap, pooling won by 13.5%; on 1 GB, it lost 34%, with 461 Full GCs
-against 4. The reason is that a long-lived virtual thread gets its `StackChunk` promoted
-to the old generation, and the JVM then allocates fresh chunks and abandons the old ones
-every cycle. Pooling converts cheap young-gen garbage into expensive old-gen retention.
+measured little to gain from it.
+
+> **Correction (October 2026):** this paragraph first quoted the original version of that
+> post: pooling won by 13.5% on a 4 GB heap and lost 34% on 1 GB, with 461 Full GCs
+> against 4, explained by long-lived virtual threads getting their `StackChunk` promoted to
+> the old generation. On September 11 the post was substantially revised. The benchmark
+> itself had a bug: Jackson's default recycler kept about 200 MB of extra live heap in the
+> pooled runs. After the fix, pooling gains about 3% on a 4 GB heap, and the author
+> withdrew the `StackChunk` explanation of the collapse on small heaps, which he now
+> describes as "reported, not explained". The advice stands; the numbers and the
+> mechanism this paragraph used to give do not. Read the revised post.
 
 **Watch out for deep recursion on G1.** G1 does not support humongous `StackChunk`
 objects. If a virtual thread's stack reaches half the region size (which can be 512 KB on

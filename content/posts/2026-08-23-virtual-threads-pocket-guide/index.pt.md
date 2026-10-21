@@ -606,10 +606,17 @@ Duas pegadinhas concretas para guardar:
 
 **Não faça pool de virtual thread.** Além de contrariar o design, o
 [benchmark do Nigro](https://quarkus.io/blog/to-cache-or-not-to-cache-virtual-threads/)
-mostra por quê: com heap de 4 GB, pooling ganhava 13,5%; com 1 GB, perdia 34%, com 461
-Full GCs contra 4. O motivo é que virtual thread longeva tem seu `StackChunk` promovido
-para o old gen, e a JVM então passa a alocar chunks novos e abandonar os velhos a cada
-ciclo. Pooling converte lixo barato do young gen em retenção cara no old gen.
+mediu pouco a ganhar com isso.
+
+> **Correção (outubro de 2026):** este parágrafo citava a versão original daquele post:
+> pooling ganhava 13,5% com heap de 4 GB e perdia 34% com 1 GB, com 461 Full GCs contra 4,
+> explicado pela promoção do `StackChunk` de virtual threads longevas para o old gen. Em 11
+> de setembro o post foi revisado a fundo. O próprio benchmark tinha um bug: o reciclador
+> padrão do Jackson segurava cerca de 200 MB a mais de heap vivo nas execuções com pool.
+> Depois da correção, o pool ganha cerca de 3% com heap de 4 GB, e o autor retirou a
+> explicação por `StackChunk` para o colapso em heaps pequenos, que agora ele descreve como
+> "reported, not explained". O conselho continua valendo; os números e o mecanismo que
+> este parágrafo dava, não. Leia o post revisado.
 
 **Cuidado com recursão profunda no G1.** O G1 não suporta `StackChunk` humongous. Se a
 pilha de uma virtual thread passar de metade do tamanho da região (que pode ser 512 KB em

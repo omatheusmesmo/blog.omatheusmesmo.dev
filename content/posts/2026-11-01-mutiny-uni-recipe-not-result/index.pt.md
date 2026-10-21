@@ -1,7 +1,7 @@
 ---
 title: "Por dentro do núcleo reativo do Quarkus, parte 3: um Uni é uma receita, não um resultado"
 date: 2026-11-01T10:00:00-03:00
-draft: true
+draft: false
 tags: ["Quarkus", "Java", "Mutiny", "Reactive", "Back-pressure", "Quarkus Internals"]
 author: "Matheus Oliveira"
 slug: "mutiny-uni-receita-nao-resultado"
@@ -116,6 +116,23 @@ O post do Escoffier sobre os dois operadores descreve a diferença com precisão
 | O callback devolve | nada | um `Uni` |
 | Faz a subscription do que o callback devolve | não | sim, e espera o item |
 | Use para | log, um efeito colateral síncrono e rápido | um efeito colateral assíncrono: auditoria, flush, fechar recurso |
+
+```mermaid
+sequenceDiagram
+    participant Q as Quarkus
+    participant P as place()
+    participant A as Uni da auditoria
+    Note over Q,A: com invoke(audit::apply)
+    Q->>P: subscribe
+    P->>A: cria e descarta
+    P-->>Q: placed:order-42
+    Note over A: sem subscriber, a auditoria nunca roda
+    Note over Q,A: com call(audit::apply)
+    Q->>P: subscribe
+    P->>A: subscribe
+    A-->>P: item, a auditoria é gravada
+    P-->>Q: placed:order-42
+```
 
 O mesmo erro aparece com o Hibernate Reactive: `repository.persist(entity)` devolve um `Uni`, e chamá-lo numa linha sozinha, sem encadear no `Uni` que você devolve, deixa esse `Uni` sem subscriber. A regra é sempre a mesma: todo `Uni` precisa acabar na cadeia que alguém vai assinar.
 
@@ -245,6 +262,20 @@ return Multi.createBy().repeating()
 ```
 
 Com páginas de dois itens e um consumer que pega os três primeiros com `select().first(3)`, o teste verifica que exatamente **duas** páginas foram carregadas. Quando o `first(3)` tem o suficiente, ele cancela, o cancelamento chega na repetição, e nenhuma outra página é pedida. O loop imperativo precisaria de um contador e de um `break` para fazer o mesmo.
+
+```mermaid
+sequenceDiagram
+    participant S as Subscriber
+    participant F as select().first(3)
+    participant R as Repetição de páginas
+    S->>F: request
+    F->>R: request
+    R-->>F: página 1: itens 1 e 2
+    R-->>F: página 2: itens 3 e 4
+    F-->>S: 1, 2, 3
+    F->>R: cancel
+    Note over R: a página 3 nunca é carregada
+```
 
 **Uma fonte que não pode desacelerar exige uma decisão.** Ticks, entrada do usuário e sensores num protocolo push não esperam requests. Para eles, o Mutiny tem o `onOverflow()`. O `BurstBuffer` usa um buffer limitado, e o teste mostra o que acontece quando ele enche: o subscriber recebe uma `BackPressureFailure` em vez de um heap que não para de crescer. A opinião do Escoffier sobre a alternativa, um buffer ilimitado: "In general, that's a terrible idea as you may run out of memory."
 

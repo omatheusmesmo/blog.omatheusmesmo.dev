@@ -1,7 +1,7 @@
 ---
 title: "Inside the Quarkus reactive core, part 2: who runs your code"
 date: 2026-10-25T10:00:00-03:00
-draft: true
+draft: false
 tags: ["Quarkus", "Java", "Vert.x", "Virtual Threads", "Reactive", "Kafka", "Quarkus Internals"]
 author: "Matheus Oliveira"
 slug: "quarkus-who-runs-your-code"

@@ -319,19 +319,26 @@ Três anotações e o tópico Kafka vira um stream HTTP no navegador. No Spring,
 
 ### O detalhe que derruba aplicação: a thread do consumidor
 
-Este é o erro mais comum de quem chega no Reactive Messaging vindo do `@KafkaListener`. **O método `@Incoming` roda numa thread de I/O, a event loop do Vert.x.** Se você fizer uma chamada bloqueante ali (persistir no banco, chamar uma API HTTP síncrona) você trava a event loop e derruba a vazão da aplicação inteira.
+> **Correção (outubro de 2026):** a primeira versão desta seção dizia que todo método `@Incoming` roda na event loop. Isso deixou de ser verdade no Quarkus 3.10, como mostraram os testes escritos para a [parte 2 da série sobre o núcleo reativo](/posts/quarkus-quem-roda-o-seu-codigo/). A seção abaixo está corrigida.
+
+Material escrito para versões antigas, o livro incluído, ainda ensina a regra antiga. Até o Quarkus 3.9, **um método `@Incoming` síncrono rodava numa thread de I/O, a event loop do Vert.x**, e uma chamada bloqueante ali (persistir no banco, chamar uma API HTTP síncrona) travava a event loop e a vazão da aplicação inteira. Desde o [Quarkus 3.10](https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.10), o messaging segue a mesma regra do Quarkus REST: quem decide é a assinatura. Um método síncrono roda numa worker thread, e um assíncrono (`Uni`, `CompletionStage`) na event loop:
 
 ```java
-// ERRADO: bloqueia a event loop
+// síncrono: uma worker thread desde o Quarkus 3.10
 @Incoming("orders-in")
+@Transactional
 public void consume(OrderDispatched order) {
-    Stock.persist(new Stock(order));  // JDBC é bloqueante
+    Stock.persist(new Stock(order));
 }
+
+// assíncrono: a event loop, onde nada pode bloquear
+@Incoming("orders-in")
+public Uni<Void> consume(OrderDispatched order) { ... }
 ```
 
-Existem duas saídas.
+O comportamento antigo está a uma propriedade de distância, `quarkus.messaging.blocking.signatures.execution.mode=event-loop`, e a mesma propriedade pode mandar os métodos síncronos para virtual threads, com `virtual-thread`. A armadilha que sobra é uma chamada bloqueante dentro de uma assinatura assíncrona. E você ainda pode escolher a thread explicitamente, de duas formas.
 
-**Saída 1: `@Blocking`.** Move a execução para uma worker thread. É a resposta clássica, e a única que o livro conhece.
+**Saída 1: `@Blocking`.** Move a execução para uma worker thread, qualquer que seja a assinatura. Para um método síncrono isso já é o padrão desde o 3.10, então hoje o `@Blocking` importa pelo que acrescenta: ordenação e pools nomeados. Quando o livro foi escrito, era a única resposta.
 
 ```java
 import io.smallrye.reactive.messaging.annotations.Blocking;
@@ -826,7 +833,7 @@ A coluna do Spring reflete o Spring Boot 4.1, que traz o Spring for Apache Kafka
 | Broker em dev | Docker Compose ou Testcontainers manual | **Dev Services** automático |
 | Criação de tópicos | Script ou bean `NewTopic` | `quarkus.kafka.devservices.topic-partitions.*` |
 | Serde JSON | `JacksonJsonSerializer` e `JacksonJsonDeserializer` configurados | Auto-detecção e auto-geração |
-| Thread do consumidor | Thread do container (bloqueante) | Event loop, exige `@Blocking` ou `@RunOnVirtualThread` |
+| Thread do consumidor | Thread do container (bloqueante) | Escolhida pela assinatura desde o 3.10: worker para métodos síncronos, event loop para `Uni` e `CompletionStage` |
 | Teste sem broker | `@EmbeddedKafka`, só KRaft desde o Spring Kafka 4 | Conector in-memory |
 | Modelo reativo | Reactor (`Flux`) | Mutiny (`Multi`, `Uni`) |
 
@@ -840,7 +847,7 @@ O Reactive Messaging fecha o arco de mensageria da série. O **Event Bus** desac
 
 O que mais mudou desde o livro não foi a API. `@Incoming` e `@Outgoing` continuam iguais. Mudou tudo em volta: o Capítulo 5 pede Docker Compose, Zookeeper e scripts de criação de tópico, e hoje isso é uma dependência e zero configuração. Some a auto-geração de serdes e o resultado é um exemplo funcional em menos de 100 linhas de Java.
 
-Guarde os dois pontos que mais causam incidente: **consumidor bloqueante sem `@Blocking` ou `@RunOnVirtualThread`**, e a **escrita dupla** entre a transação e o `emitter.send()`. Os dois passam nos testes e aparecem em produção.
+Guarde os dois pontos que mais causam incidente: **chamada bloqueante dentro de um consumidor assíncrono** (uma assinatura `Uni` ou `CompletionStage` roda na event loop), e a **escrita dupla** entre a transação e o `emitter.send()`. Os dois passam nos testes e aparecem em produção.
 
 No próximo artigo, mudamos de assunto: **compilação nativa com GraalVM e dockerização**. Vamos transformar essa aplicação num binário nativo, entender por que o build demora tanto, como o Quarkus resolve reflection sem configuração manual, e medir quanta memória o nativo economiza em relação ao JAR.
 

@@ -24,6 +24,11 @@ defaultContentLanguage = 'pt'
   displayFullLangName = true
   images = ["/images/duke.svg"]
 
+  [params.matomo]
+    enabled = true
+    url = 'https://matomo.omatheusmesmo.dev/'
+    siteId = 1
+
   # Social Meta Tags (Open Graph / Twitter Cards)
   [params.social]
     Twitter = "omatheusmesmo"
